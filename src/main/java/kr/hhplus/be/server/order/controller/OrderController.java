@@ -7,10 +7,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/users/{userId}/orders/{orderId}")
+@RequestMapping("/api/v1/orders/{orderId}")
 public class OrderController{
 
-    @PostMapping
+    @PostMapping("/users/{userId}")
     public ResponseEntity<OrderResponse.Detail> getOrder(
             @PathVariable Long orderId,@PathVariable Long userId
     ) {
