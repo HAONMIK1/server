@@ -24,4 +24,27 @@ public class ProductService {
             .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
     }
 
+    public boolean canPurchase(Long productId, Integer quantity) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+        return product.canPurchase(quantity);
+    }
+
+    public ProductEntity updateStock(Long productId, Integer quantity) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+
+        product.decreaseStock(quantity);
+        return productRepository.save(product);
+    }
+
+    public void updateProductStatus(Long productId, ProductEntity.ProductStatus productStatus) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+
+        product.updateStatus(productStatus);
+        productRepository.save(product);
+    }
+
+
 }
