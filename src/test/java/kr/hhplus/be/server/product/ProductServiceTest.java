@@ -1,12 +1,15 @@
 package kr.hhplus.be.server.product;
 
 import kr.hhplus.be.server.product.application.service.ProductService;
+import kr.hhplus.be.server.product.domain.entity.PopularProductEntity;
 import kr.hhplus.be.server.product.domain.entity.ProductEntity;
 import kr.hhplus.be.server.product.domain.repository.PopularProductRepository;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.repository.CrudRepository;
 
 import java.time.LocalDateTime;
@@ -18,6 +21,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
+@ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
     @Mock
     private ProductRepository productRepository;
@@ -64,6 +68,26 @@ class ProductServiceTest {
         verify(productRepository).findById(productId);
     }
 
+    @Test
+    void 인기_상품_조회_성공() {
+        // given
+        List<PopularProductEntity> popularProducts = Arrays.asList(
+                PopularProductEntity.createPopularProduct(1L, 1000, 500),
+                PopularProductEntity.createPopularProduct(2L, 800, 300),
+                PopularProductEntity.createPopularProduct(3L, 600, 200)
+        );
+        given(popularProductRepository.findAll()).willReturn(popularProducts);
 
+        // when
+        List<PopularProductEntity> result = productService.getPopularProducts();
+
+        // then
+        assertThat(result).hasSize(3);
+        assertThat(result.get(0).getViewCount()).isEqualTo(1000);
+        assertThat(result.get(0).getSalesCount()).isEqualTo(500);
+        assertThat(result.get(1).getViewCount()).isEqualTo(800);
+        assertThat(result.get(1).getSalesCount()).isEqualTo(300);
+        verify(popularProductRepository).findAll();
+    }
 
 }

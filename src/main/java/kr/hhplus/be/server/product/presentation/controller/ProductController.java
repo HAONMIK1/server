@@ -3,6 +3,7 @@ package kr.hhplus.be.server.product.presentation.controller;
 import kr.hhplus.be.server.product.application.service.ProductService;
 import kr.hhplus.be.server.product.domain.entity.PopularProductEntity;
 import kr.hhplus.be.server.product.domain.entity.ProductEntity;
+import kr.hhplus.be.server.product.presentation.dto.PopularProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,11 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/popular")
+    public ResponseEntity<List<PopularProductEntity>> getPopularProducts() {
+        List<PopularProductEntity> products = productService.getPopularProducts();
+        return ResponseEntity.ok(products);
+    }
 
 
 }

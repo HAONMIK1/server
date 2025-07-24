@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.product;
 
 import kr.hhplus.be.server.product.application.service.ProductService;
+import kr.hhplus.be.server.product.domain.entity.PopularProductEntity;
 import kr.hhplus.be.server.product.domain.entity.ProductEntity;
 import kr.hhplus.be.server.product.presentation.controller.ProductController;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -71,4 +72,32 @@ class ProductControllerTest {
         assertThat(result.getName()).isEqualTo("테스트 상품");
         verify(productService).getProduct(productId);
     }
+
+    @Test
+    void 인기상품_조회() throws Exception {
+        // given
+        List<PopularProductEntity> popularProducts = Arrays.asList(
+                PopularProductEntity.createPopularProduct(1L, 1000, 500),
+                PopularProductEntity.createPopularProduct(2L, 800, 300),
+                PopularProductEntity.createPopularProduct(3L, 600, 200),
+                PopularProductEntity.createPopularProduct(4L, 400, 100),
+                PopularProductEntity.createPopularProduct(5L, 200, 50)
+        );
+        given(productService.getPopularProducts()).willReturn(popularProducts);
+
+        // when & then
+        mockMvc.perform(get("/api/v1/products/popular"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].viewCount").value(1000))
+                .andExpect(jsonPath("$[0].salesCount").value(500))
+                .andExpect(jsonPath("$[1].viewCount").value(800))
+                .andExpect(jsonPath("$[1].salesCount").value(300))
+                .andExpect(jsonPath("$[2].viewCount").value(600))
+                .andExpect(jsonPath("$[2].salesCount").value(200));
+
+        verify(productService).getPopularProducts();
+    }
+
+
 }

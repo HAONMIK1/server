@@ -14,7 +14,6 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
     private final PopularProductRepository popularProductRepository;
-
     public List<ProductEntity> getProducts() {
         return productRepository.findAll();
     }
@@ -47,4 +46,7 @@ public class ProductService {
     }
 
 
+    public List<PopularProductEntity> getPopularProducts() {
+        return popularProductRepository.findAll();
+    }
 }
