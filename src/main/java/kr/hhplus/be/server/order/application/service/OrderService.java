@@ -38,6 +38,8 @@ public class OrderService {
         //  주문 완료
         completeOrder(order);
 
+        //  데이터 플랫폼 전송
+
         return new OrderResponse.Payment(
                 payment.getId(),
                 payment.getPaidAmount(),
