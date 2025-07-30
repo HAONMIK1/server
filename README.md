@@ -3,15 +3,14 @@
 ## 아키텍처
 
 이 프로젝트는 **도메인 중심 계층형 아키텍처(Domain-Centric Layered Architecture)**를 적용했습니다.
-각 도메인(`balance`, `coupon`, `order`, `product`)별로 독립적인 계층 구조를 가지며, 비즈니스 로직의 응집도를 높이고 의존성을 최소화합니다.
 
 ### 패키지 구조
 ```
 kr.hhplus.be.server.{domain}
 ├── presentation/     # 표현 계층
 ├── application/      # 애플리케이션 계층  
-├── domain/          # 도메인 계층
-└── common/          # 공통 유틸리티
+├── domain/           # 도메인 계층
+└── infrastructure/   # 인프라 계층
 ```
 
 ### 계층별 책임
