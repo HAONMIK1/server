@@ -35,29 +35,6 @@ class CouponServiceTest {
     private CouponService couponService;
 
     @Test
-    @DisplayName("쿠폰 발급 성공")
-    void 사용자_쿠폰ID_주어짐_쿠폰발급_수행_발급정보_반환() {
-        // given
-        Long userId = 1L;
-        Long couponId = 1L;
-        CouponEntity coupon = createValidCoupon();
-        UserCouponEntity userCoupon = createUserCoupon(userId, couponId);
-
-        given(couponRepository.findById(couponId)).willReturn(Optional.of(coupon));
-        given(userCouponRepository.existsByUserIdAndCouponId(userId, couponId)).willReturn(false);
-        given(userCouponRepository.save(any(UserCouponEntity.class))).willReturn(userCoupon);
-
-        // when
-        CouponResponse.Issue response = couponService.issueCoupon(userId, couponId);
-
-        // then
-        assertThat(response.userId()).isEqualTo(userId);
-        assertThat(response.couponId()).isEqualTo(couponId);
-        verify(couponRepository).save(coupon);
-        verify(userCouponRepository).save(any(UserCouponEntity.class));
-    }
-
-    @Test
     void 쿠폰_발급_성공() {
         // given
         Long userId = 1L;

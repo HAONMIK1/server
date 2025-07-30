@@ -26,8 +26,7 @@ public class OrderEntityTest {
     @DisplayName("주문 생성 테스트")
     class CreateOrderTest {
         @Test
-        @DisplayName("성공 - 쿠폰 없이")
-        void create_order_without_coupon() {
+        void 주문_생성_쿠폰_없이_성공() {
             // given
             Long userId = 1L;
             ProductEntity product1 = createProduct(1L, 10000);
@@ -51,8 +50,7 @@ public class OrderEntityTest {
         }
 
         @Test
-        @DisplayName("성공 - 쿠폰 사용")
-        void create_order_with_coupon() {
+        void 쿠폰_사용_성공() {
             // given
             Long userId = 1L;
             Long userCouponId = 10L;
@@ -76,8 +74,7 @@ public class OrderEntityTest {
     class ChangeStatusTest {
 
         @Test
-        @DisplayName("성공 - 주문을 완료 상태로 변경한다.")
-        void complete_order_success() {
+        void 주문_완료_상태() {
             // Given
             OrderEntity order = OrderEntity.createOrder(1L, null, List.of());
             
@@ -89,8 +86,7 @@ public class OrderEntityTest {
         }
         
         @Test
-        @DisplayName("실패 - 이미 처리된 주문을 완료할 수 없다.")
-        void complete_order_fail_already_processed() {
+        void 처리된_주문_실패() {
             // Given
             OrderEntity order = OrderEntity.createOrder(1L, null, List.of());
             order.complete();
@@ -102,19 +98,17 @@ public class OrderEntityTest {
         }
 
         @Test
-        @DisplayName("성공 - 주문 유효성을 검증한다.")
-        void validate_order_success() {
+        void 주문_유효성_성공() {
             // Given
             Long correctUserId = 1L;
             OrderEntity order = OrderEntity.createOrder(correctUserId, null, List.of());
 
-            // When & Then (should not throw exception)
+            // When & Then
             order.validateOrder(correctUserId);
         }
 
         @Test
-        @DisplayName("실패 - 주문자 정보가 일치하지 않는다.")
-        void validate_order_fail_wrong_user() {
+        void 주문자_정보_불일치_실패() {
             // Given
             Long correctUserId = 1L;
             Long wrongUserId = 2L;

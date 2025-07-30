@@ -46,7 +46,6 @@ class ProductServiceTest {
     private ProductSalesCountRepository productSalesCountRepository;
 
     @Test
-    @DisplayName("상품목록_조회_성공")
     void 상품목록_조회_성공() {
         // given
         ProductEntity product1 = new ProductEntity();
@@ -64,7 +63,6 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("상품_조회_성공")
     void 상품_조회_성공() {
         // given
         Long productId = 1L;
@@ -89,7 +87,6 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("상품_조회_존재하지않음_예외")
     void 상품_조회_존재하지않음_예외() {
         // given
         Long productId = 999L;
@@ -102,7 +99,6 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("조회수_증가_신규상품")
     void 조회수_증가_신규상품() {
         // given
         Long productId = 1L;
@@ -118,7 +114,6 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("조회수_증가_기존상품")
     void 조회수_증가_기존상품() {
         // given
         Long productId = 1L;
@@ -138,7 +133,6 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("재고_확인_성공")
     void 재고_확인_성공() {
         // given
         Long productId = 1L;
@@ -157,7 +151,6 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("재고_확인_부족_예외")
     void 재고_확인_부족_예외() {
         // given
         Long productId = 1L;
@@ -175,7 +168,6 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("재고_차감_성공")
     void 재고_차감_성공() {
         // given
         Long productId = 1L;
@@ -198,7 +190,6 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("재고_차감_상품없음_예외")
     void 재고_차감_상품없음_예외() {
         // given
         Long productId = 999L;
@@ -213,7 +204,6 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("판매수_증가_신규상품")
     void 판매수_증가_신규상품() {
         // given
         Long productId = 1L;
@@ -229,7 +219,6 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("판매수_증가_기존상품")
     void 판매수_증가_기존상품() {
         // given
         Long productId = 1L;
@@ -249,7 +238,6 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("인기상품_조회_성공")
     void 인기상품_조회_성공() {
         // given
         PopularProductEntity popularProduct1 = PopularProductEntity.createPopularProduct(1L, 100, 50);
@@ -267,7 +255,6 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("인기상품_업데이트_성공")
     void 인기상품_업데이트_성공() {
         // given
         Object[] productData1 = {1L, 50, 100, java.time.LocalDateTime.now()};
