@@ -1,3 +1,4 @@
+
 ### 잔액 조회 API
 ```mermaid
 sequenceDiagram
@@ -154,7 +155,9 @@ participant 데이터베이스
         컨트롤러-->>클라이언트: 쿠폰 발급 완료
     end
  ``` 
+
 ### 주문 API 
+
 ```mermaid
 sequenceDiagram
     actor 사용자
