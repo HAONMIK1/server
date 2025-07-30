@@ -9,4 +9,11 @@ import java.util.List;
 @Repository
 public interface PopularProductRepository extends JpaRepository<PopularProductEntity, Long> {
 
+    List<PopularProductEntity> findPopularProductsOrderedByPriority();
+
+    List<PopularProductEntity> findTopPopularProducts();
+
+    void deleteAllPopularProducts();
+
+    List<Object[]> findPopularProductsData();
 }

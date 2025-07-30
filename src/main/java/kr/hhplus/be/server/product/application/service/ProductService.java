@@ -2,11 +2,16 @@ package kr.hhplus.be.server.product.application.service;
 
 import kr.hhplus.be.server.product.domain.entity.PopularProductEntity;
 import kr.hhplus.be.server.product.domain.entity.ProductEntity;
+import kr.hhplus.be.server.product.domain.entity.ProductSalesCountEntity;
+import kr.hhplus.be.server.product.domain.entity.ProductViewCountEntity;
 import kr.hhplus.be.server.product.domain.repository.PopularProductRepository;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
+import kr.hhplus.be.server.product.domain.repository.ProductSalesCountRepository;
+import kr.hhplus.be.server.product.domain.repository.ProductViewCountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -14,39 +19,91 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
     private final PopularProductRepository popularProductRepository;
+    private final ProductViewCountRepository productViewCountRepository;
+    private final ProductSalesCountRepository productSalesCountRepository;
+
     public List<ProductEntity> getProducts() {
         return productRepository.findAll();
     }
 
     public ProductEntity getProduct(Long productId) {
+        ProductEntity product = getProductInternal(productId);
+
+        increaseViewCount(productId);
+
+        return product;
+    }
+
+    private ProductEntity getProductInternal(Long productId) {
         return productRepository.findById(productId)
-            .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
     }
 
-    public boolean canPurchase(Long productId, Integer quantity) {
-        ProductEntity product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
-        return product.canPurchase(quantity);
+    public void increaseViewCount(Long productId) {
+        ProductViewCountEntity viewCount = productViewCountRepository.findByProductId(productId)
+                .orElseGet(() -> {
+                    ProductViewCountEntity newViewCount = new ProductViewCountEntity();
+                    newViewCount.setProductId(productId);
+                    newViewCount.setViewCount(0);
+                    return newViewCount;
+                });
+
+        viewCount.setViewCount(viewCount.getViewCount() + 1);
+        productViewCountRepository.save(viewCount);
     }
 
-    public ProductEntity updateStock(Long productId, Integer quantity) {
+    public void checkStock(Long productId, int quantity) {
+        ProductEntity product = getProductInternal(productId);
+        if (!product.canPurchase(quantity)) {
+            throw new IllegalArgumentException("상품 재고가 부족합니다.");
+        }
+    }
+
+    public void decreaseStock(Long productId, int quantity) {
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
-
         product.decreaseStock(quantity);
-        return productRepository.save(product);
+
+        // 판매량 증가
+        increaseSalesCount(productId);
     }
 
-    public void updateProductStatus(Long productId, ProductEntity.ProductStatus productStatus) {
-        ProductEntity product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+    public void increaseSalesCount(Long productId) {
+        ProductSalesCountEntity salesCount = productSalesCountRepository.findByProductId(productId)
+                .orElseGet(() -> {
+                    ProductSalesCountEntity newSalesCount = new ProductSalesCountEntity();
+                    newSalesCount.setProductId(productId);
+                    newSalesCount.setSalesCount(0);
+                    return newSalesCount;
+                });
 
-        product.updateStatus(productStatus);
-        productRepository.save(product);
+        salesCount.setSalesCount(salesCount.getSalesCount() + 1);
+        productSalesCountRepository.save(salesCount);
     }
-
 
     public List<PopularProductEntity> getPopularProducts() {
-        return popularProductRepository.findAll();
+        return popularProductRepository.findPopularProductsOrderedByPriority();
+    }
+
+   //상위 5개만 인기상품 테이블에 저장
+    public void updatePopularProducts() {
+        // 1. 기존 인기상품 테이블 초기화
+        popularProductRepository.deleteAllPopularProducts();
+
+        // 2. 상위 5개 인기상품 데이터 조회
+        List<Object[]> popularProducts = popularProductRepository.findPopularProductsData();
+
+        // 3. 인기상품 테이블에 저장
+        for (Object[] data : popularProducts) {
+            Long productId = ((Number) data[0]).longValue();
+            int salesCount = ((Number) data[1]).intValue();
+            int viewCount = ((Number) data[2]).intValue();
+            LocalDateTime regDt = (LocalDateTime) data[3];
+
+            PopularProductEntity popularProduct = PopularProductEntity.createPopularProduct(
+                    productId, viewCount, salesCount
+            );
+            popularProductRepository.save(popularProduct);
+        }
     }
 }

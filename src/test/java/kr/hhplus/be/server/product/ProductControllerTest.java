@@ -4,100 +4,132 @@ import kr.hhplus.be.server.product.application.service.ProductService;
 import kr.hhplus.be.server.product.domain.entity.PopularProductEntity;
 import kr.hhplus.be.server.product.domain.entity.ProductEntity;
 import kr.hhplus.be.server.product.presentation.controller.ProductController;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.hhplus.be.server.product.presentation.dto.PopularProductResponse;
+import kr.hhplus.be.server.product.presentation.dto.ProductResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-@WebMvcTest(ProductController.class)
+@ExtendWith(MockitoExtension.class)
 class ProductControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @InjectMocks
+    private ProductController productController;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
+    @Mock
     private ProductService productService;
 
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(productController).build();
+    }
+
     @Test
-    void 상품_목록_조회() throws Exception {
+    void 상품목록_조회_성공() throws Exception {
         // given
-        List<ProductEntity> products = Arrays.asList(
-                ProductEntity.createProduct(1L, "상품1", 10000, 100),
-                ProductEntity.createProduct(2L, "상품2", 20000, 50)
-        );
+        ProductEntity product1 = new ProductEntity();
+        ReflectionTestUtils.setField(product1, "id", 1L);
+        ReflectionTestUtils.setField(product1, "name", "상품1");
+        ReflectionTestUtils.setField(product1, "price", 10000);
+        ReflectionTestUtils.setField(product1, "totalQuantity", 100);
+        ReflectionTestUtils.setField(product1, "stockQuantity", 50);
+        ReflectionTestUtils.setField(product1, "status", ProductEntity.ProductStatus.AVAILABLE);
+
+        ProductEntity product2 = new ProductEntity();
+        ReflectionTestUtils.setField(product2, "id", 2L);
+        ReflectionTestUtils.setField(product2, "name", "상품2");
+        ReflectionTestUtils.setField(product2, "price", 20000);
+        ReflectionTestUtils.setField(product2, "totalQuantity", 80);
+        ReflectionTestUtils.setField(product2, "stockQuantity", 30);
+        ReflectionTestUtils.setField(product2, "status", ProductEntity.ProductStatus.AVAILABLE);
+
+        List<ProductEntity> products = Arrays.asList(product1, product2);
         given(productService.getProducts()).willReturn(products);
 
         // when & then
-        mockMvc.perform(get("/api/v1/products"))
+        mockMvc.perform(get("/api/v1/products")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].name").value("상품1"))
                 .andExpect(jsonPath("$[0].price").value(10000))
                 .andExpect(jsonPath("$[1].id").value(2))
                 .andExpect(jsonPath("$[1].name").value("상품2"))
                 .andExpect(jsonPath("$[1].price").value(20000));
-
-        verify(productService).getProducts();
     }
 
     @Test
-    void 상품_상세_조회() throws Exception {
+    @DisplayName("상품_상세조회_성공")
+    void 상품_상세조회_성공() throws Exception {
         // given
         Long productId = 1L;
-        ProductEntity product = ProductEntity.createProduct(productId, "테스트 상품", 15000, 75);
+        ProductEntity product = new ProductEntity();
+        ReflectionTestUtils.setField(product, "id", productId);
+        ReflectionTestUtils.setField(product, "name", "테스트 상품");
+        ReflectionTestUtils.setField(product, "price", 15000);
+        ReflectionTestUtils.setField(product, "totalQuantity", 100);
+        ReflectionTestUtils.setField(product, "stockQuantity", 25);
+        ReflectionTestUtils.setField(product, "status", ProductEntity.ProductStatus.AVAILABLE);
+
         given(productService.getProduct(productId)).willReturn(product);
 
-        // when
-        ProductEntity result = productService.getProduct(productId);
-
-        // then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(productId);
-        assertThat(result.getName()).isEqualTo("테스트 상품");
-        verify(productService).getProduct(productId);
+        // when & then
+        mockMvc.perform(get("/api/v1/products/{productId}", productId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(productId))
+                .andExpect(jsonPath("$.name").value("테스트 상품"))
+                .andExpect(jsonPath("$.price").value(15000))
+                .andExpect(jsonPath("$.stockQuantity").value(25));
     }
 
     @Test
-    void 인기상품_조회() throws Exception {
+    @DisplayName("인기상품_조회_성공")
+    void 인기상품_조회_성공() throws Exception {
         // given
-        List<PopularProductEntity> popularProducts = Arrays.asList(
-                PopularProductEntity.createPopularProduct(1L, 1000, 500),
-                PopularProductEntity.createPopularProduct(2L, 800, 300),
-                PopularProductEntity.createPopularProduct(3L, 600, 200),
-                PopularProductEntity.createPopularProduct(4L, 400, 100),
-                PopularProductEntity.createPopularProduct(5L, 200, 50)
-        );
+        PopularProductEntity popularProduct1 = PopularProductEntity.createPopularProduct(1L, 100, 50);
+        ReflectionTestUtils.setField(popularProduct1, "id", 1L);
+        ReflectionTestUtils.setField(popularProduct1, "regDt", java.time.LocalDateTime.now());
+        
+        PopularProductEntity popularProduct2 = PopularProductEntity.createPopularProduct(2L, 80, 30);
+        ReflectionTestUtils.setField(popularProduct2, "id", 2L);
+        ReflectionTestUtils.setField(popularProduct2, "regDt", java.time.LocalDateTime.now());
+        
+        List<PopularProductEntity> popularProducts = Arrays.asList(popularProduct1, popularProduct2);
+
         given(productService.getPopularProducts()).willReturn(popularProducts);
 
         // when & then
-        mockMvc.perform(get("/api/v1/products/popular"))
+        mockMvc.perform(get("/api/v1/products/popular")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].viewCount").value(1000))
-                .andExpect(jsonPath("$[0].salesCount").value(500))
-                .andExpect(jsonPath("$[1].viewCount").value(800))
-                .andExpect(jsonPath("$[1].salesCount").value(300))
-                .andExpect(jsonPath("$[2].viewCount").value(600))
-                .andExpect(jsonPath("$[2].salesCount").value(200));
-
-        verify(productService).getPopularProducts();
+                .andExpect(jsonPath("$[0].productId").value(1))
+                .andExpect(jsonPath("$[0].viewCount").value(100))
+                .andExpect(jsonPath("$[0].salesCount").value(50))
+                .andExpect(jsonPath("$[1].productId").value(2))
+                .andExpect(jsonPath("$[1].viewCount").value(80))
+                .andExpect(jsonPath("$[1].salesCount").value(30));
     }
-
 
 }

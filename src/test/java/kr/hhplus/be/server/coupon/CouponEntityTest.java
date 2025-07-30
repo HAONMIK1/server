@@ -1,3 +1,4 @@
+
 package kr.hhplus.be.server.coupon;
 
 import kr.hhplus.be.server.coupon.domain.entity.CouponEntity;
@@ -6,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CouponEntityTest {
 
@@ -14,11 +16,8 @@ class CouponEntityTest {
         // given
         CouponEntity coupon = createValidCoupon();
 
-        // when
-        boolean canIssue = coupon.canIssue();
-
-        // then
-        assertThat(canIssue).isTrue();
+        // when & then
+        coupon.canIssue(); // 예외가 발생하지 않으면 성공
     }
 
     @Test
@@ -27,11 +26,10 @@ class CouponEntityTest {
         CouponEntity coupon = createValidCoupon();
         coupon.setStatus(CouponEntity.CouponStatus.INACTIVE);
 
-        // when
-        boolean canIssue = coupon.canIssue();
-
-        // then
-        assertThat(canIssue).isFalse();
+        // when & then
+        assertThatThrownBy(() -> coupon.canIssue())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("쿠폰을 발급할 수 없습니다.");
     }
 
     @Test
@@ -40,11 +38,10 @@ class CouponEntityTest {
         CouponEntity coupon = createValidCoupon();
         coupon.setEndDt(LocalDateTime.now().minusDays(1)); // 어제 만료
 
-        // when
-        boolean canIssue = coupon.canIssue();
-
-        // then
-        assertThat(canIssue).isFalse();
+        // when & then
+        assertThatThrownBy(() -> coupon.canIssue())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("쿠폰을 발급할 수 없습니다.");
     }
 
     @Test
@@ -54,21 +51,20 @@ class CouponEntityTest {
         coupon.setQuantity(10);
         coupon.setIssuedCount(10); // 재고 소진
 
-        // when
-        boolean canIssue = coupon.canIssue();
-
-        // then
-        assertThat(canIssue).isFalse();
+        // when & then
+        assertThatThrownBy(() -> coupon.canIssue())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("쿠폰을 발급할 수 없습니다.");
     }
 
     @Test
-    void 쿠폰_발급_공() {
+    void 쿠폰_발급_성공() {
         // given
         CouponEntity coupon = createValidCoupon();
         int beforeCount = coupon.getIssuedCount();
 
         // when
-        coupon.issue();
+        coupon.increaseIssuedCount();
 
         // then
         assertThat(coupon.getIssuedCount()).isEqualTo(beforeCount + 1);
