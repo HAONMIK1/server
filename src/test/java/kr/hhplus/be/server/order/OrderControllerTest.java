@@ -4,10 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.hhplus.be.server.order.application.service.OrderService;
 import kr.hhplus.be.server.order.presentation.controller.OrderController;
-import kr.hhplus.be.server.order.presentation.controller.dto.OrderRequest;
-import kr.hhplus.be.server.order.presentation.controller.dto.OrderResponse;
+import kr.hhplus.be.server.order.presentation.dto.OrderRequest;
+import kr.hhplus.be.server.order.presentation.dto.OrderResponse;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,11 +17,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,32 +47,19 @@ class OrderControllerTest {
     void 주문_처리_성공() throws Exception {
         // given
         Long userId = 1L;
-        Long orderId = 1L;
-        OrderRequest.Create request = new OrderRequest.Create(orderId, null);
-        OrderResponse.Payment response = new OrderResponse.Payment(
-                1L,
-                10000,
-                "BALANCE",
-                "COMPLETED",
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-        given(orderService.createOrder(userId, orderId)).willReturn(response);
+        Long userCouponId = 1L;
+        OrderRequest.Create request = new OrderRequest.Create(List.of(new OrderRequest.OrderItem(1L, 2)), userCouponId);
+
+        OrderResponse.Detail response = new OrderResponse.Detail(1L, userId, "PENDING", 20000, 0, 20000, LocalDateTime.now());
+
+        given(orderService.placeOrder(eq(userId), any(OrderRequest.Create.class))).willReturn(response);
 
         // when & then
-        mockMvc.perform(post("/api/v1/users/{userId}/orders/{orderId}/process", userId, orderId)
+        mockMvc.perform(post("/api/v1/users/{userId}/orders", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(response.id()))
-                .andExpect(jsonPath("$.paidAmount").value(response.paidAmount()))
-                .andExpect(jsonPath("$.paymentMethod").value(response.paymentMethod()))
-                .andExpect(jsonPath("$.paymentStatus").value(response.paymentStatus()))
-                .andDo(print());
-
-        verify(orderService).createOrder(userId, orderId);
+                .andExpect(jsonPath("$.orderId").value(1L))
+                .andExpect(jsonPath("$.status").value("PENDING"));
     }
-
-
-
 }

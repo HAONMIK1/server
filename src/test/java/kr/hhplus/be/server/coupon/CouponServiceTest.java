@@ -23,7 +23,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("CouponService 단위 테스트")
 class CouponServiceTest {
 
     @Mock

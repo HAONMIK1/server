@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.product.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -11,13 +11,15 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "popular_product")
 @Getter
-@Setter
 @NoArgsConstructor
 public class PopularProductEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "product_id", nullable = false)
+    private Long productId;
 
     @Column(name = "view_count", nullable = false)
     private Integer viewCount;
@@ -35,8 +37,9 @@ public class PopularProductEntity {
 
     public static PopularProductEntity createPopularProduct(Long productId, int viewCount, int salesCount) {
         PopularProductEntity popularProduct = new PopularProductEntity();
-        popularProduct.setViewCount(viewCount);
-        popularProduct.setSalesCount(salesCount);
+        popularProduct.productId = productId;
+        popularProduct.viewCount = viewCount;
+        popularProduct.salesCount = salesCount;
         return popularProduct;
     }
 }

@@ -9,7 +9,8 @@ erDiagram
     }
 
     USER_BALANCE {
-        BIGINT user_id PK,FK "사용자 ID"
+        BIGINT id PK "ID"
+        INT user_id "사용자 ID"
         INT balance "잔액"
         DATETIME reg_dt "등록일"
         DATETIME mdfcn_dt "수정일"
@@ -17,7 +18,7 @@ erDiagram
 
     BALANCE_HISTORY {
         BIGINT id PK "ID"
-        BIGINT user_id FK "사용자 ID"
+        INT user_id "사용자 ID"
         INT amount "금액"
         STRING type "타입: CHARGE, USE"
         DATETIME reg_dt "등록일"
@@ -34,16 +35,26 @@ erDiagram
         DATETIME mdfcn_dt "수정일"
     }
 
-    PRODUCT_STATISTICS {
-        BIGINT product_id PK,FK "상품 ID"
+    PRODUCT_VIEW_COUNT {
+        BIGINT id PK "ID"
+        INT product_id "상품 ID"
         INT view_count "조회수"
+        DATETIME reg_dt "등록일"
+        DATETIME mdfcn_dt "수정일"
+    }
+    
+    PRODUCT_SALES_COUNT {
+        BIGINT id PK "ID"
+        INT product_id  "상품 ID"
         INT sales_count "판매량"
         DATETIME reg_dt "등록일"
         DATETIME mdfcn_dt "수정일"
     }
+    
 
     POPULAR_PRODUCT {
-        BIGINT product_id PK,FK "상품 ID"
+        BIGINT id PK "ID"
+        INT product_id "상품 ID"
         INT view_count "조회수"
         INT sales_count "판매량"
         DATETIME reg_dt "등록일"
@@ -65,17 +76,16 @@ erDiagram
 
     USER_COUPON {
         BIGINT id PK "사용자쿠폰 ID"
-        BIGINT user_id FK "사용자 ID"
-        BIGINT coupon_id FK "쿠폰 ID"
-        STRING coupon_name "쿠폰 이름"
+        INT user_id  "사용자 ID"
+        INT coupon_id  "쿠폰 ID"
         STRING status "쿠폰 상태"
         DATETIME reg_dt "등록일"
     }
 
     ORDER_RESULT {
         BIGINT id PK "주문 ID"
-        BIGINT user_id FK "사용자 ID"
-        BIGINT user_coupon_id FK "사용한 쿠폰 ID"
+        INT user_id  "사용자 ID"
+        INT user_coupon_id  "사용한 쿠폰 ID"
         INT total_amount "총 주문 금액"
         INT discount_amount "할인 금액"
         INT final_amount "최종 결제 금액"
@@ -86,9 +96,9 @@ erDiagram
     }
 
     ORDER_ITEM {
-        BIGINT id PK "주문 아이템 ID"
-        BIGINT order_id FK "주문 ID"
-        BIGINT product_id FK "상품 ID"
+        BIGINT id PK "ID"
+        INT order_id "주문 ID"
+        INT product_id "상품 ID"
         INT quantity "수량"
         INT price "상품 가격"
         DATETIME reg_dt "등록일"
@@ -96,8 +106,8 @@ erDiagram
 
     PAYMENT {
         BIGINT id PK "결제 ID"
-        BIGINT order_id FK "주문 ID"
-        BIGINT user_id FK "사용자 ID"
+        INT order_id  "주문 ID"
+        INT user_id  "사용자 ID"
         INT paid_amount "결제 금액"
         INT original_amount "원래 금액"
         INT discount_amount "할인 금액"
@@ -117,5 +127,6 @@ erDiagram
     ORDER_RESULT ||--|| PAYMENT : "결제"
     ORDER_RESULT ||--o{ ORDER_ITEM : "주문 상세"
     PRODUCT ||--o{ ORDER_ITEM : "주문됨"
-    PRODUCT ||--|| PRODUCT_STATISTICS : "통계"
-    PRODUCT_STATISTICS ||--|| POPULAR_PRODUCT : "인기상품"
+    PRODUCT ||--|| PRODUCT_SALES_COUNT : "통계"
+    PRODUCT ||--|| PRODUCT_VIEW_COUNT : "통계"
+    PRODUCT ||--|| POPULAR_PRODUCT : "인기상품" 

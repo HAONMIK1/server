@@ -16,12 +16,19 @@ public class BalanceService {
     private final BalanceHistoryRepository balanceHistoryRepository;
 
 
-    public BalanceResponse chargeBalance(Long userId, int amount) {//포인트 충전
-        UserBalanceEntity userBalance = userBalanceRepository.findByUserId(userId);
+    public BalanceResponse charge(Long userId, int amount) {//포인트 충전
+        UserBalanceEntity userBalance = getBalance(userId);
         userBalance.charge(amount);
         UserBalanceEntity savedBalance = userBalanceRepository.save(userBalance);
         saveChargeHistory(userId, amount);
         return BalanceResponse.from(savedBalance);
+    }
+
+    public void use(Long userId, Integer amount) {//포인트 차감
+        UserBalanceEntity userBalance = getBalance(userId);
+        userBalance.use(amount);
+        userBalanceRepository.save(userBalance);
+        saveUseHistory(userId, amount);
     }
 
     public UserBalanceEntity getBalance(Long userId) {//포인트 조회

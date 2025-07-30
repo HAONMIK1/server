@@ -44,7 +44,7 @@ class BalanceServiceTest {
         when(balanceHistoryRepository.save(any(BalanceHistoryEntity.class))).thenReturn(new BalanceHistoryEntity());
 
         // when
-        BalanceResponse result = balanceService.chargeBalance(userId, chargeAmount);
+        BalanceResponse result = balanceService.charge(userId, chargeAmount);
 
         // then
         assertThat(result.userId()).isEqualTo(userId);
@@ -65,7 +65,7 @@ class BalanceServiceTest {
         when(balanceHistoryRepository.save(any(BalanceHistoryEntity.class))).thenReturn(new BalanceHistoryEntity());
 
         // when
-        BalanceResponse result = balanceService.chargeBalance(userId, chargeAmount);
+        BalanceResponse result = balanceService.charge(userId, chargeAmount);
 
         // then
         assertThat(result.balance()).isEqualTo(1000);
@@ -83,7 +83,7 @@ class BalanceServiceTest {
         when(balanceHistoryRepository.save(any(BalanceHistoryEntity.class))).thenReturn(new BalanceHistoryEntity());
 
         // when
-        BalanceResponse result = balanceService.chargeBalance(userId, chargeAmount);
+        BalanceResponse result = balanceService.charge(userId, chargeAmount);
 
         // then
         assertThat(result.balance()).isEqualTo(1000000);
@@ -98,7 +98,7 @@ class BalanceServiceTest {
         when(userBalanceRepository.findByUserId(userId)).thenReturn(userBalance);
 
         // when & then
-        assertThatThrownBy(() -> balanceService.chargeBalance(userId, chargeAmount))
+        assertThatThrownBy(() -> balanceService.charge(userId, chargeAmount))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("최소 충전 금액 미만");
     }
@@ -112,7 +112,7 @@ class BalanceServiceTest {
         when(userBalanceRepository.findByUserId(userId)).thenReturn(userBalance);
 
         // when & then
-        assertThatThrownBy(() -> balanceService.chargeBalance(userId, chargeAmount))
+        assertThatThrownBy(() -> balanceService.charge(userId, chargeAmount))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("최대 충전 금액 초과");
     }
@@ -126,7 +126,7 @@ class BalanceServiceTest {
         when(userBalanceRepository.findByUserId(userId)).thenReturn(userBalance);
 
         // when & then
-        assertThatThrownBy(() -> balanceService.chargeBalance(userId, chargeAmount))
+        assertThatThrownBy(() -> balanceService.charge(userId, chargeAmount))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("최대 보유 잔액 초과");
     }
@@ -212,7 +212,7 @@ class BalanceServiceTest {
         when(userBalanceRepository.save(any(UserBalanceEntity.class))).thenReturn(userBalance);
 
         // when
-        balanceService.chargeBalance(userId, chargeAmount);
+        balanceService.charge(userId, chargeAmount);
 
         // then
         verify(balanceHistoryRepository).save(argThat(history ->

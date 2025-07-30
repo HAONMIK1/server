@@ -26,7 +26,7 @@ public class BalanceController {
     public ResponseEntity<BalanceResponse> chargeBalance(
             @PathVariable Long userId,
             @RequestBody BalanceRequest.Charge request) {
-        BalanceResponse result = balanceService.chargeBalance(userId, request.amount());
+        BalanceResponse result = balanceService.charge(userId, request.amount());
         return ResponseEntity.ok(result);
     }
 

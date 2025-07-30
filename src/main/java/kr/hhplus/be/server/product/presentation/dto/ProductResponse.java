@@ -3,6 +3,7 @@ package kr.hhplus.be.server.product.presentation.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
+import kr.hhplus.be.server.product.domain.entity.ProductEntity;
 
 public class ProductResponse {
     public record Details(
@@ -18,6 +19,17 @@ public class ProductResponse {
             int stockQuantity,
             @Schema(description = "상품 상태", requiredMode = RequiredMode.REQUIRED)
             String status
-    ) {}
+    ) {
+        public static Details from(ProductEntity product) {
+            return new Details(
+                    product.getId(),
+                    product.getName(),
+                    product.getPrice(),
+                    product.getTotalQuantity(),
+                    product.getStockQuantity(),
+                    product.getStatus().name()
+            );
+        }
+    }
 
 }

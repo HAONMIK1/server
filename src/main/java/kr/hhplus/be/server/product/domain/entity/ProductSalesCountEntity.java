@@ -10,11 +10,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "product_statistics")
+@Table(name = "product_sales_count")
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProductStatisticsEntity {
+public class ProductSalesCountEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,9 +22,6 @@ public class ProductStatisticsEntity {
 
     @Column(name = "product_id", nullable = false, unique = true)
     private Long productId;
-
-    @Column(name = "view_count", nullable = false)
-    private Integer viewCount = 0;
 
     @Column(name = "sales_count", nullable = false)
     private Integer salesCount = 0;
@@ -40,5 +37,4 @@ public class ProductStatisticsEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", insertable = false, updatable = false)
     private ProductEntity product;
-
 }

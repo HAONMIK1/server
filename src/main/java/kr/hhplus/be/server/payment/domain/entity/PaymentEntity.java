@@ -1,9 +1,8 @@
-package kr.hhplus.be.server.order.domain.entity;
+package kr.hhplus.be.server.payment.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import kr.hhplus.be.server.order.domain.entity.OrderEntity;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -11,7 +10,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "payment")
 @Getter
-@Setter
 @NoArgsConstructor
 public class PaymentEntity {
     @Id
@@ -48,16 +46,42 @@ public class PaymentEntity {
     @Column(name = "reg_dt", nullable = false)
     private LocalDateTime regDt;
 
-
-
-    public PaymentEntity(Long orderId, Long userId, Integer paidAmount, Integer originalAmount, Integer discountAmount, PaymentMethod paymentMethod) {
+    @Builder
+    private PaymentEntity(Long orderId, Long userId, Integer paidAmount, Integer originalAmount, Integer discountAmount, PaymentMethod paymentMethod, PaymentStatus paymentStatus, LocalDateTime paidAt) {
         this.orderId = orderId;
         this.userId = userId;
         this.paidAmount = paidAmount;
         this.originalAmount = originalAmount;
         this.discountAmount = discountAmount;
         this.paymentMethod = paymentMethod;
-        this.paymentStatus = PaymentStatus.COMPLETED;
+        this.paymentStatus = paymentStatus;
+        this.paidAt = paidAt;
+    }
+
+    public static PaymentEntity createForOrder(OrderEntity order) {
+        return PaymentEntity.builder()
+                .orderId(order.getId())
+                .userId(order.getUserId())
+                .paidAmount(order.getFinalAmount())
+                .originalAmount(order.getTotalAmount())
+                .discountAmount(order.getDiscountAmount())
+                .paymentMethod(PaymentMethod.BALANCE)
+                .paymentStatus(PaymentStatus.COMPLETED)
+                .paidAt(LocalDateTime.now())
+                .build();
+    }
+
+    public static PaymentEntity from(OrderEntity order, String paymentMethod) {
+        return PaymentEntity.builder()
+                .orderId(order.getId())
+                .userId(order.getUserId())
+                .paidAmount(order.getFinalAmount())
+                .originalAmount(order.getTotalAmount())
+                .discountAmount(order.getDiscountAmount())
+                .paymentMethod(PaymentMethod.valueOf(paymentMethod.toUpperCase()))
+                .paymentStatus(PaymentStatus.COMPLETED)
+                .paidAt(LocalDateTime.now())
+                .build();
     }
 
     public enum PaymentMethod {
