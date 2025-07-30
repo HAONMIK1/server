@@ -1,13 +1,10 @@
-package kr.hhplus.be.server.order.domain.repository;
+package kr.hhplus.be.server.payment.domain.repository;
 
-import kr.hhplus.be.server.order.domain.entity.PaymentEntity;
+import kr.hhplus.be.server.payment.domain.entity.PaymentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-
-@Repository
 public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
     Optional<PaymentEntity> findByOrderId(Long orderId);
 }

@@ -1,3 +1,4 @@
+
 package kr.hhplus.be.server.balance;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,13 +7,15 @@ import kr.hhplus.be.server.balance.domain.entity.UserBalanceEntity;
 import kr.hhplus.be.server.balance.presentation.controller.BalanceController;
 import kr.hhplus.be.server.balance.presentation.dto.BalanceRequest;
 import kr.hhplus.be.server.balance.presentation.dto.BalanceResponse;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
 
@@ -23,17 +26,24 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(BalanceController.class)
+@ExtendWith(MockitoExtension.class)
 class BalanceControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @InjectMocks
+    private BalanceController balanceController;
 
-    @Autowired
+    @Mock
+    private BalanceService balanceService;
+
+    private MockMvc mockMvc;
     private ObjectMapper objectMapper;
 
-    @MockBean
-    private BalanceService balanceService;
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(balanceController).build();
+        objectMapper = new ObjectMapper();
+        objectMapper.findAndRegisterModules();
+    }
 
     @Test
     void 잔액_조회_성공() throws Exception {
@@ -58,8 +68,8 @@ class BalanceControllerTest {
         Integer chargeAmount = 5000;
         BalanceRequest.Charge request = new BalanceRequest.Charge(userId, chargeAmount);
         BalanceResponse response = new BalanceResponse(userId, 15000, LocalDateTime.now());
-        
-        given(balanceService.chargeBalance(eq(userId), eq(chargeAmount))).willReturn(response);
+
+        given(balanceService.charge(eq(userId), eq(chargeAmount))).willReturn(response);
 
         // when & then
         mockMvc.perform(post("/api/v1/users/{userId}/balance/charge", userId)
@@ -69,6 +79,6 @@ class BalanceControllerTest {
                 .andExpect(jsonPath("$.userId").value(userId))
                 .andExpect(jsonPath("$.balance").value(15000));
 
-        verify(balanceService).chargeBalance(userId, chargeAmount);
+        verify(balanceService).charge(userId, chargeAmount);
     }
 }

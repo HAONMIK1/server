@@ -52,7 +52,9 @@ public class UserCouponEntity {
         this.status = UserCouponStatus.USED;
     }
 
-    public boolean canUse() {
-        return status == UserCouponStatus.UNUSED;
+    public void canUse() {
+        if(status != UserCouponStatus.UNUSED){
+            throw new IllegalArgumentException("사용할 수 없는 쿠폰입니다.");
+        }
     }
 }

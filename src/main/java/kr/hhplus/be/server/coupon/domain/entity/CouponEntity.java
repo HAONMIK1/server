@@ -52,37 +52,31 @@ public class CouponEntity {
     @Column(name = "mdfcn_dt")
     private LocalDateTime mdfcnDt;
 
-
-    @PreUpdate
-    protected void onUpdate() {
-        mdfcnDt = LocalDateTime.now();
-    }
-
     public enum CouponStatus {
         ACTIVE, INACTIVE, EXPIRED
     }
-    public boolean canIssue() {
+    public void canIssue() {
         LocalDateTime now = LocalDateTime.now();
 
         // 쿠폰 상태
         if (status != CouponStatus.ACTIVE) {
-            return false;
+            throw new IllegalArgumentException("쿠폰을 발급할 수 없습니다.");
         }
 
         // 발급 기간
         if (now.isBefore(startDt) || now.isAfter(endDt)) {
-            return false;
+            throw new IllegalArgumentException("쿠폰을 발급할 수 없습니다.");
         }
 
         // 발급 가능 수량
-        return issuedCount < quantity;
-    }
-
-    public void issue() {
-        if (!canIssue()) {
-            throw new IllegalStateException("쿠폰을 발급할 수 없습니다.");
+        if(issuedCount >= quantity){
+            throw new IllegalArgumentException("쿠폰을 발급할 수 없습니다.");
         }
 
+    }
+
+    public void increaseIssuedCount() {
+        canIssue();
         this.issuedCount++;
     }
     public int calculateDiscount(int totalAmount) {

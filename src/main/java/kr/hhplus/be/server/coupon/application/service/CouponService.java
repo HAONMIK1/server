@@ -20,9 +20,7 @@ public class CouponService {
                 .orElseThrow(() -> new IllegalArgumentException("쿠폰을 찾을 수 없습니다."));
 
         // 발급 가능 여부 확인
-        if (!coupon.canIssue()) {
-            throw new IllegalArgumentException("쿠폰을 발급할 수 없습니다. (품절 또는 기간 만료)");
-        }
+        coupon.canIssue();
 
         // 중복 발급 확인
         if (userCouponRepository.existsByUserIdAndCouponId(userId, couponId)) {
@@ -30,7 +28,7 @@ public class CouponService {
         }
 
         // 쿠폰 발급
-        coupon.issue();
+        coupon.increaseIssuedCount();
         couponRepository.save(coupon);
 
         // 사용자 쿠폰 생성
@@ -41,25 +39,25 @@ public class CouponService {
     }
 
     public int calculateDiscount(Long userCouponId, int totalAmount) {
-        UserCouponEntity userCoupon = userCouponRepository.findById(userCouponId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자 쿠폰을 찾을 수 없습니다."));
-
-        if (!userCoupon.canUse()) {
-            throw new IllegalArgumentException("사용할 수 없는 쿠폰입니다.");
-        }
-
-        CouponEntity coupon = couponRepository.findById(userCoupon.getCouponId())
-                .orElseThrow(() -> new IllegalArgumentException("쿠폰을 찾을 수 없습니다."));
-
+        UserCouponEntity userCoupon  = getUserCoupon(userCouponId);
+        userCoupon.canUse();
+        CouponEntity coupon = getCoupon(userCouponId);
         return coupon.calculateDiscount(totalAmount);
     }
 
     public void useCoupon(Long userCouponId) {
-        UserCouponEntity userCoupon = userCouponRepository.findById(userCouponId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자 쿠폰을 찾을 수 없습니다."));
-
+        UserCouponEntity userCoupon  = getUserCoupon(userCouponId);
         userCoupon.use();
         userCouponRepository.save(userCoupon);
     }
 
+    public UserCouponEntity getUserCoupon(Long userCouponId) {
+        return userCouponRepository.findById(userCouponId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자 쿠폰을 찾을 수 없습니다."));
+    }
+
+    public CouponEntity getCoupon(Long userCouponId) {
+        return couponRepository.findById(userCouponId)
+                .orElseThrow(() -> new IllegalArgumentException("쿠폰을 찾을 수 없습니다."));
+    }
 }
