@@ -1,5 +1,5 @@
 
-package kr.hhplus.be.server.balance.controller;
+package kr.hhplus.be.server.balance;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.balance.application.service.BalanceService;
