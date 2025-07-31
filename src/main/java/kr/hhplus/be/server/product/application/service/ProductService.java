@@ -85,20 +85,19 @@ public class ProductService {
         return popularProductRepository.findPopularProductsOrderedByPriority();
     }
 
-   //상위 5개만 인기상품 테이블에 저장
+    //상위 5개만 인기상품 테이블에 저장
     public void updatePopularProducts() {
         // 1. 기존 인기상품 테이블 초기화
         popularProductRepository.deleteAllPopularProducts();
 
-        // 2. 상위 5개 인기상품 데이터 조회
-        List<Object[]> popularProducts = popularProductRepository.findPopularProductsData();
+        // 2. 상품 메인 테이블과 판매량, 조회수 테이블 LEFT JOIN하여 상위 5개 조회
+        List<Object[]> top5Products = popularProductRepository.findPopularProducts();
 
         // 3. 인기상품 테이블에 저장
-        for (Object[] data : popularProducts) {
+        for (Object[] data : top5Products) {
             Long productId = ((Number) data[0]).longValue();
             int salesCount = ((Number) data[1]).intValue();
             int viewCount = ((Number) data[2]).intValue();
-            LocalDateTime regDt = (LocalDateTime) data[3];
 
             PopularProductEntity popularProduct = PopularProductEntity.createPopularProduct(
                     productId, viewCount, salesCount

@@ -84,13 +84,13 @@ public class PaymentEntity {
                 .build();
     }
 
-    public enum PaymentMethod {
+    public static enum PaymentMethod {
         BALANCE,
         CARD,
         CASH
     }
 
-    public enum PaymentStatus {
+    public static enum PaymentStatus {
         PENDING,
         COMPLETED,
         FAILED,

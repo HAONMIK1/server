@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class BalanceController {
 
-    private final BalanceService balanceService;;
+    private final BalanceService balanceService;
 
     @GetMapping
     public ResponseEntity<UserBalanceEntity> getBalance(@PathVariable Long userId) {

@@ -8,6 +8,8 @@ import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CouponService {
@@ -45,10 +47,20 @@ public class CouponService {
         return coupon.calculateDiscount(totalAmount);
     }
 
-    public void useCoupon(Long userCouponId) {
-        UserCouponEntity userCoupon  = getUserCoupon(userCouponId);
+    public void useCoupon(Long userId) {
+        // 사용자의 미사용 쿠폰 중 첫 번째 쿠폰 사용
+        List<UserCouponEntity> userCoupons = userCouponRepository.findByUserId(userId);
+        UserCouponEntity userCoupon = userCoupons.stream()
+                .filter(coupon -> coupon.getStatus() == UserCouponEntity.UserCouponStatus.UNUSED)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("발급받지 않은 쿠폰입니다."));
+        
         userCoupon.use();
         userCouponRepository.save(userCoupon);
+    }
+
+    public List<CouponEntity> getAllCoupons() {
+        return couponRepository.findAll();
     }
 
     public UserCouponEntity getUserCoupon(Long userCouponId) {
@@ -59,5 +71,9 @@ public class CouponService {
     public CouponEntity getCoupon(Long userCouponId) {
         return couponRepository.findById(userCouponId)
                 .orElseThrow(() -> new IllegalArgumentException("쿠폰을 찾을 수 없습니다."));
+    }
+
+    public List<UserCouponEntity> getUserCoupons(Long userId) {
+        return userCouponRepository.findByUserId(userId);
     }
 }
