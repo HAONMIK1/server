@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.balance;
+package kr.hhplus.be.server.balance.service;
 
 import kr.hhplus.be.server.balance.domain.entity.BalanceHistoryEntity;
 import kr.hhplus.be.server.balance.domain.entity.UserBalanceEntity;
@@ -6,8 +6,6 @@ import kr.hhplus.be.server.balance.domain.repository.BalanceHistoryRepository;
 import kr.hhplus.be.server.balance.domain.repository.UserBalanceRepository;
 import kr.hhplus.be.server.balance.application.service.BalanceService;
 import kr.hhplus.be.server.balance.presentation.dto.BalanceResponse;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

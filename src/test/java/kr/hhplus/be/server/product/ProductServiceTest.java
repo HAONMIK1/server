@@ -261,15 +261,15 @@ class ProductServiceTest {
         Object[] productData2 = {2L, 30, 80, java.time.LocalDateTime.now()};
         List<Object[]> popularProductsData = Arrays.asList(productData1, productData2);
 
-        given(popularProductRepository.findPopularProductsData()).willReturn(popularProductsData);
-        given(popularProductRepository.save(any(PopularProductEntity.class))).willReturn(PopularProductEntity.createPopularProduct(1L, 100, 50));
+        given(popularProductRepository.findPopularProducts()).willReturn(popularProductsData);
+        given(popularProductRepository.save(any(PopularProductEntity.class))).willReturn(new PopularProductEntity());
 
         // when
         productService.updatePopularProducts();
 
         // then
         verify(popularProductRepository).deleteAllPopularProducts();
-        verify(popularProductRepository).findPopularProductsData();
+        verify(popularProductRepository).findPopularProducts();
         verify(popularProductRepository, org.mockito.Mockito.times(2)).save(any(PopularProductEntity.class));
     }
 }

@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.balance;
+package kr.hhplus.be.server.balance.entity;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
