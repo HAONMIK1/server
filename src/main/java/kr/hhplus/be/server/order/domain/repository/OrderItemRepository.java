@@ -1,12 +1,10 @@
 package kr.hhplus.be.server.order.domain.repository;
 
 import kr.hhplus.be.server.order.domain.entity.OrderItemEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-import java.util.List;
 
-@Repository
-public interface OrderItemRepository extends JpaRepository<OrderItemEntity, Long> {
+import java.util.Optional;
 
-    List<OrderItemEntity> findByOrderId(Long orderId);
+public interface OrderItemRepository {
+    Optional<OrderItemEntity> findById(Long id);
+    OrderItemEntity save(OrderItemEntity orderItem);
 }

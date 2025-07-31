@@ -26,7 +26,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 @Import(TestcontainersConfiguration.class)
+@Transactional
+@DisplayName("Product 도메인 통합 테스트")
 public class ProductIntegrationTest {
 
     @Autowired
@@ -63,6 +66,7 @@ public class ProductIntegrationTest {
     }
 
     @Test
+    @DisplayName("상품_전체조회_API_성공")
     void 상품_전체조회_API_성공() throws Exception {
         // when & then
         mockMvc.perform(get("/api/v1/products"))
@@ -75,6 +79,7 @@ public class ProductIntegrationTest {
     }
 
     @Test
+    @DisplayName("상품_단건조회_API_성공")
     void 상품_단건조회_API_성공() throws Exception {
         // when & then
         mockMvc.perform(get("/api/v1/products/{productId}", testProduct1.getId()))
@@ -88,6 +93,7 @@ public class ProductIntegrationTest {
 
 
     @Test
+    @DisplayName("인기상품_조회_API_성공")
     void 인기상품_조회_API_성공() throws Exception {
         // when & then
         mockMvc.perform(get("/api/v1/products/popular"))
@@ -96,6 +102,7 @@ public class ProductIntegrationTest {
     }
 
     @Test
+    @DisplayName("인기상품_업데이트_API_성공")
     void 인기상품_업데이트_API_성공() throws Exception {
         // when & then
         mockMvc.perform(post("/api/v1/products/popular/update"))
@@ -103,6 +110,7 @@ public class ProductIntegrationTest {
     }
 
     @Test
+    @DisplayName("전체_상품조회_서비스계층_테스트")
     void 전체_상품조회_서비스계층_테스트() {
         // when
         List<ProductEntity> products = productRepository.findAll();
