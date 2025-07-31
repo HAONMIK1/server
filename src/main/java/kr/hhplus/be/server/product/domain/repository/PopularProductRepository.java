@@ -2,16 +2,20 @@ package kr.hhplus.be.server.product.domain.repository;
 
 import kr.hhplus.be.server.product.domain.entity.PopularProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface PopularProductRepository extends JpaRepository<PopularProductEntity, Long> {
+public interface PopularProductRepository {
+
+    List<Object[]> findPopularProducts();
 
     List<PopularProductEntity> findPopularProductsOrderedByPriority();
 
     void deleteAllPopularProducts();
 
-    List<Object[]> findPopularProductsData();
+    PopularProductEntity save(PopularProductEntity popularProduct);
 }
