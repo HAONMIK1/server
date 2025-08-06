@@ -15,8 +15,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@ActiveProfiles("test")
-@DisplayName("ProductJpaRepository 테스트")
 class ProductJpaRepositoryTest {
 
     @Autowired
@@ -34,7 +32,6 @@ class ProductJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("상품_저장_성공")
     void 상품_저장_성공() {
         // when
         ProductEntity savedProduct = productJpaRepository.save(testProduct);
@@ -47,7 +44,6 @@ class ProductJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("상품_ID조회_성공")
     void 상품_ID조회_성공() {
         // given
         ProductEntity savedProduct = productJpaRepository.save(testProduct);
@@ -61,7 +57,6 @@ class ProductJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("상품_ID조회_실패_존재하지않음")
     void 상품_ID조회_실패_존재하지않음() {
         // when
         Optional<ProductEntity> foundProduct = productJpaRepository.findById(999L);
@@ -71,7 +66,6 @@ class ProductJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("상품_전체조회_성공")
     void 상품_전체조회_성공() {
         // given
         productJpaRepository.save(testProduct);
@@ -93,7 +87,6 @@ class ProductJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("상품_재고수정_성공")
     void 상품_재고수정_성공() {
         // given
         ProductEntity savedProduct = productJpaRepository.save(testProduct);
@@ -108,7 +101,6 @@ class ProductJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("상품_락조회_성공")
     void 상품_락조회_성공() {
         // given
         ProductEntity savedProduct = productJpaRepository.save(testProduct);

@@ -26,8 +26,8 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     
     public PaymentResponse.Complete processPayment(Long userId, Long orderId, PaymentRequest.Process request) {
-        // 1. 주문 조회 및 검증
-        OrderEntity order = orderService.getOrder(orderId);
+        // 1. 주문 조회 및 검증 (orderItems 포함하여 N+1 문제 방지)
+        OrderEntity order = orderService.getOrderWithOrderItems(orderId);
         order.validateForPayment(userId);
         
         // 2. 주문 금액 계산 및 확정

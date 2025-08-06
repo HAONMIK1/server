@@ -16,8 +16,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@ActiveProfiles("test")
-@DisplayName("PopularProductJpaRepository 테스트")
 class PopularProductJpaRepositoryTest {
 
     @Autowired
@@ -50,7 +48,6 @@ class PopularProductJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("인기상품_저장_성공")
     void 인기상품_저장_성공() {
         // given
         PopularProductEntity popularProduct = PopularProductEntity.createPopularProduct(
@@ -67,7 +64,6 @@ class PopularProductJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("인기상품_우선순위조회_성공")
     void 인기상품_우선순위조회_성공() {
         // given
         PopularProductEntity popularProduct1 = PopularProductEntity.createPopularProduct(
@@ -89,7 +85,6 @@ class PopularProductJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("인기상품_전체삭제_성공")
     void 인기상품_전체삭제_성공() {
         // given
         PopularProductEntity popularProduct1 = PopularProductEntity.createPopularProduct(
@@ -110,16 +105,22 @@ class PopularProductJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("인기상품_통계데이터조회_성공")
     void 인기상품_통계데이터조회_성공() {
-        // given - 이 테스트는 실제 DB에 판매량, 조회수 데이터가 있어야 하므로 기본 구조만 테스트
-        
+        // given
+        PopularProductEntity popularProduct1 = PopularProductEntity.createPopularProduct(
+                testProduct1.getId(), 150, 80); // 조회수 150, 판매수 80
+        PopularProductEntity popularProduct2 = PopularProductEntity.createPopularProduct(
+                testProduct2.getId(), 200, 60); // 조회수 200, 판매수 60
+
+        popularProductJpaRepository.save(popularProduct1);
+        popularProductJpaRepository.save(popularProduct2);
+
         // when
-        List<Object[]> popularProductsData = popularProductJpaRepository.findPopularProducts();
-        
+        List<PopularProductEntity> directResults = popularProductJpaRepository.findPopularProductsOrderedByPriority();
+
         // then
-        assertThat(popularProductsData).isNotNull();
-        // 실제 데이터가 없으므로 빈 결과 또는 null 값들 예상
-        // List<Object[]>이므로 isEmpty() 또는 각 Object[]이 null일 수 있음
+        assertThat(directResults).hasSize(2);
+        assertThat(directResults.get(0).getViewCount()).isEqualTo(200);
+        assertThat(directResults.get(1).getViewCount()).isEqualTo(150);
     }
 }

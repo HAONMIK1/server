@@ -14,8 +14,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@ActiveProfiles("test")
-@DisplayName("CouponJpaRepository 테스트")
 class CouponJpaRepositoryTest {
 
     @Autowired
@@ -37,7 +35,6 @@ class CouponJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("쿠폰_저장_성공")
     void 쿠폰_저장_성공() {
         // when
         CouponEntity savedCoupon = couponJpaRepository.save(testCoupon);
@@ -53,7 +50,6 @@ class CouponJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("쿠폰_ID조회_성공")
     void 쿠폰_ID조회_성공() {
         // given
         CouponEntity savedCoupon = couponJpaRepository.save(testCoupon);
@@ -69,7 +65,6 @@ class CouponJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("쿠폰_ID조회_실패_존재하지않음")
     void 쿠폰_ID조회_실패_존재하지않음() {
         // when
         Optional<CouponEntity> foundCoupon = couponJpaRepository.findById(999L);
@@ -79,7 +74,6 @@ class CouponJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("쿠폰_발급수량증가_성공")
     void 쿠폰_발급수량증가_성공() {
         // given
         CouponEntity savedCoupon = couponJpaRepository.save(testCoupon);
@@ -94,7 +88,6 @@ class CouponJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("쿠폰_발급수량증가_여러번_성공")
     void 쿠폰_발급수량증가_여러번_성공() {
         // given
         CouponEntity savedCoupon = couponJpaRepository.save(testCoupon);
@@ -113,7 +106,6 @@ class CouponJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("쿠폰_수정_성공")
     void 쿠폰_수정_성공() {
         // given
         CouponEntity savedCoupon = couponJpaRepository.save(testCoupon);

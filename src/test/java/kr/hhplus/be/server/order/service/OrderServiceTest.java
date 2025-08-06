@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.order;
+package kr.hhplus.be.server.order.service;
 
 import kr.hhplus.be.server.order.application.service.OrderService;
 import kr.hhplus.be.server.order.domain.entity.OrderEntity;
@@ -6,7 +6,6 @@ import kr.hhplus.be.server.order.domain.repository.OrderRepository;
 import kr.hhplus.be.server.order.presentation.dto.OrderRequest;
 import kr.hhplus.be.server.product.application.service.ProductService;
 import kr.hhplus.be.server.product.domain.entity.ProductEntity;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

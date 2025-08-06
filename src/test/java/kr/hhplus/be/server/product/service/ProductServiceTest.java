@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.product;
+package kr.hhplus.be.server.product.service;
 
 import kr.hhplus.be.server.product.application.service.ProductService;
 import kr.hhplus.be.server.product.domain.entity.PopularProductEntity;
@@ -9,7 +9,6 @@ import kr.hhplus.be.server.product.domain.repository.PopularProductRepository;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.domain.repository.ProductSalesCountRepository;
 import kr.hhplus.be.server.product.domain.repository.ProductViewCountRepository;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

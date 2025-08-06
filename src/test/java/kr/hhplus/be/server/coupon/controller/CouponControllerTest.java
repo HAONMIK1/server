@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.coupon;
+package kr.hhplus.be.server.coupon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.coupon.application.service.CouponService;
@@ -50,7 +50,7 @@ class CouponControllerTest {
                 1L,
                 userId,
                 couponId,
-                "테스트 쿠폰",
+                "AVAILABLE",
                 LocalDateTime.now()
         );
         given(couponService.issueCoupon(userId, couponId)).willReturn(response);
@@ -59,9 +59,10 @@ class CouponControllerTest {
         mockMvc.perform(post("/api/v1/users/{userId}/coupons/{couponId}/issue", userId, couponId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userCouponId").value(1L))
                 .andExpect(jsonPath("$.userId").value(userId))
                 .andExpect(jsonPath("$.couponId").value(couponId))
-                .andExpect(jsonPath("$.couponName").value("테스트 쿠폰"))
+                .andExpect(jsonPath("$.status").value("AVAILABLE"))
                 .andDo(print());
 
         verify(couponService).issueCoupon(userId, couponId);

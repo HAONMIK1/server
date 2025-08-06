@@ -8,12 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/users/{userId}/orders/{orderId}/process")
 @RequiredArgsConstructor
 public class OrderController{
     private final OrderService orderService;
 
-    @PostMapping
+    @PostMapping("/api/v1/users/{userId}/orders")
     public ResponseEntity<OrderResponse.Detail> createOrder(
             @PathVariable Long userId,
             @RequestBody OrderRequest.Create request

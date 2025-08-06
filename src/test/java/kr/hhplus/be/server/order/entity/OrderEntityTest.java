@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.order;
+package kr.hhplus.be.server.order.entity;
 
 import kr.hhplus.be.server.order.domain.entity.OrderEntity;
 import kr.hhplus.be.server.order.domain.entity.OrderItemEntity;

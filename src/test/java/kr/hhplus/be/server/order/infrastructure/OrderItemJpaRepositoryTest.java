@@ -16,8 +16,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@ActiveProfiles("test")
-@DisplayName("OrderItemJpaRepository 테스트")
 class OrderItemJpaRepositoryTest {
 
     @Autowired
@@ -46,7 +44,6 @@ class OrderItemJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("주문아이템_저장_성공")
     void 주문아이템_저장_성공() {
         // when
         OrderItemEntity savedOrderItem = orderItemJpaRepository.save(testOrderItem);
@@ -59,7 +56,6 @@ class OrderItemJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("주문아이템_ID조회_성공")
     void 주문아이템_ID조회_성공() {
         // given
         OrderItemEntity savedOrderItem = orderItemJpaRepository.save(testOrderItem);
@@ -75,7 +71,6 @@ class OrderItemJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("주문아이템_ID조회_실패_존재하지않음")
     void 주문아이템_ID조회_실패_존재하지않음() {
         // when
         Optional<OrderItemEntity> foundOrderItem = orderItemJpaRepository.findById(999L);
@@ -85,7 +80,6 @@ class OrderItemJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("주문아이템_다중상품_저장_성공")
     void 주문아이템_다중상품_저장_성공() {
         // given
         ProductEntity testProduct2 = new ProductEntity();

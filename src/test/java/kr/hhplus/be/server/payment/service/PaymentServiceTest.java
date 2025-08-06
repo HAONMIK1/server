@@ -1,5 +1,7 @@
-package kr.hhplus.be.server.payment;
+package kr.hhplus.be.server.payment.service;
 
+import kr.hhplus.be.server.balance.application.service.BalanceService;
+import kr.hhplus.be.server.coupon.application.service.CouponService;
 import kr.hhplus.be.server.order.application.service.OrderService;
 import kr.hhplus.be.server.order.domain.entity.OrderEntity;
 import kr.hhplus.be.server.order.domain.entity.OrderItemEntity;
@@ -9,6 +11,7 @@ import kr.hhplus.be.server.payment.domain.entity.PaymentEntity;
 import kr.hhplus.be.server.payment.domain.repository.PaymentRepository;
 import kr.hhplus.be.server.payment.presntation.dto.PaymentRequest;
 import kr.hhplus.be.server.payment.presntation.dto.PaymentResponse;
+import kr.hhplus.be.server.product.application.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +23,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -32,6 +35,15 @@ public class PaymentServiceTest {
 
     @Mock
     private OrderService orderService;
+
+    @Mock
+    private ProductService productService;
+
+    @Mock
+    private BalanceService balanceService;
+
+    @Mock
+    private CouponService couponService;
 
     @Mock
     private PaymentRepository paymentRepository;
@@ -80,10 +92,14 @@ public class PaymentServiceTest {
         PaymentRequest.Process request = new PaymentRequest.Process("BALANCE");
 
         // Mock 설정
-        given(orderService.getOrder(orderId)).willReturn(order);
+        given(orderService.getOrderWithOrderItems(orderId)).willReturn(order);
         given(orderService.calculateAndFinalizeOrderAmounts(orderId)).willReturn(order);
         given(orderRepository.save(any(OrderEntity.class))).willReturn(order);
         given(paymentRepository.save(any(PaymentEntity.class))).willReturn(payment);
+
+        // ProductService, BalanceService Mock 설정
+        doNothing().when(productService).decreaseStock(anyLong(), anyInt());
+        doNothing().when(balanceService).use(any(Long.class), any(Integer.class));
 
         // when
         PaymentResponse.Complete result = paymentService.processPayment(userId, orderId, request);
@@ -93,10 +109,12 @@ public class PaymentServiceTest {
         assertThat(result.payment()).isNotNull();
 
         // 호출 검증
-        verify(orderService).getOrder(orderId);
+        verify(orderService).getOrderWithOrderItems(orderId);
         verify(orderService).calculateAndFinalizeOrderAmounts(orderId);
         verify(orderRepository).save(any(OrderEntity.class));
         verify(paymentRepository).save(any(PaymentEntity.class));
+        verify(productService, times(2)).decreaseStock(anyLong(), anyInt()); // 2개 상품
+        verify(balanceService).use(eq(userId), any(Integer.class));
     }
 
     @Test
@@ -135,10 +153,15 @@ public class PaymentServiceTest {
         PaymentRequest.Process request = new PaymentRequest.Process("BALANCE");
 
         // Mock 설정
-        given(orderService.getOrder(orderId)).willReturn(order);
+        given(orderService.getOrderWithOrderItems(orderId)).willReturn(order);
         given(orderService.calculateAndFinalizeOrderAmounts(orderId)).willReturn(order);
         given(orderRepository.save(any(OrderEntity.class))).willReturn(order);
         given(paymentRepository.save(any(PaymentEntity.class))).willReturn(payment);
+
+        // ProductService, BalanceService, CouponService Mock 설정
+        doNothing().when(productService).decreaseStock(anyLong(), anyInt());
+        doNothing().when(balanceService).use(any(Long.class), any(Integer.class));
+        doNothing().when(couponService).useCoupon(anyLong());
 
         // when
         PaymentResponse.Complete result = paymentService.processPayment(userId, orderId, request);
@@ -148,10 +171,13 @@ public class PaymentServiceTest {
         assertThat(result.payment()).isNotNull();
 
         // 호출 검증
-        verify(orderService).getOrder(orderId);
+        verify(orderService).getOrderWithOrderItems(orderId);
         verify(orderService).calculateAndFinalizeOrderAmounts(orderId);
         verify(orderRepository).save(any(OrderEntity.class));
         verify(paymentRepository).save(any(PaymentEntity.class));
+        verify(productService).decreaseStock(1L, 1); // 1개 상품
+        verify(balanceService).use(eq(userId), any(Integer.class));
+        verify(couponService).useCoupon(userCouponId); // 쿠폰 사용
     }
 
 

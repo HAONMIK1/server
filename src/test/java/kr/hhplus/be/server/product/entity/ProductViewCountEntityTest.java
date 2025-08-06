@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.product;
+package kr.hhplus.be.server.product.entity;
 
 import kr.hhplus.be.server.product.domain.entity.ProductViewCountEntity;
 import org.junit.jupiter.api.Test;

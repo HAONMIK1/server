@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.payment;
+package kr.hhplus.be.server.payment.entity;
 
 import kr.hhplus.be.server.order.domain.entity.OrderEntity;
 import kr.hhplus.be.server.payment.domain.entity.PaymentEntity;

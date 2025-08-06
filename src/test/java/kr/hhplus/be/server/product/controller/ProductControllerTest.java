@@ -1,11 +1,9 @@
-package kr.hhplus.be.server.product;
+package kr.hhplus.be.server.product.controller;
 
 import kr.hhplus.be.server.product.application.service.ProductService;
 import kr.hhplus.be.server.product.domain.entity.PopularProductEntity;
 import kr.hhplus.be.server.product.domain.entity.ProductEntity;
 import kr.hhplus.be.server.product.presentation.controller.ProductController;
-import kr.hhplus.be.server.product.presentation.dto.PopularProductResponse;
-import kr.hhplus.be.server.product.presentation.dto.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

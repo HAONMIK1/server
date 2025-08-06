@@ -16,8 +16,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@ActiveProfiles("test")
-@DisplayName("UserCouponJpaRepository 테스트")
 class UserCouponJpaRepositoryTest {
 
     @Autowired
@@ -50,7 +48,6 @@ class UserCouponJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("사용자쿠폰_저장_성공")
     void 사용자쿠폰_저장_성공() {
         // when
         UserCouponEntity savedUserCoupon = userCouponJpaRepository.save(testUserCoupon);
@@ -63,7 +60,6 @@ class UserCouponJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("사용자쿠폰_ID조회_성공")
     void 사용자쿠폰_ID조회_성공() {
         // given
         UserCouponEntity savedUserCoupon = userCouponJpaRepository.save(testUserCoupon);
@@ -79,7 +75,6 @@ class UserCouponJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("사용자쿠폰_ID조회_실패_존재하지않음")
     void 사용자쿠폰_ID조회_실패_존재하지않음() {
         // when
         Optional<UserCouponEntity> foundUserCoupon = userCouponJpaRepository.findById(999L);
@@ -89,7 +84,6 @@ class UserCouponJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("사용자쿠폰_사용자ID_쿠폰ID조회_성공")
     void 사용자쿠폰_사용자ID_쿠폰ID조회_성공() {
         // given
         userCouponJpaRepository.save(testUserCoupon);
@@ -104,7 +98,6 @@ class UserCouponJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("사용자쿠폰_사용자ID_쿠폰ID조회_실패_존재하지않음")
     void 사용자쿠폰_사용자ID_쿠폰ID조회_실패_존재하지않음() {
         // when
         Optional<UserCouponEntity> foundUserCoupon = userCouponJpaRepository.findByUserIdAndCouponId(999L, testCoupon.getId());
@@ -114,7 +107,6 @@ class UserCouponJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("사용자쿠폰_사용처리_성공")
     void 사용자쿠폰_사용처리_성공() {
         // given
         UserCouponEntity savedUserCoupon = userCouponJpaRepository.save(testUserCoupon);
@@ -128,7 +120,6 @@ class UserCouponJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("사용자쿠폰_다중사용자_저장_성공")
     void 사용자쿠폰_다중사용자_저장_성공() {
         // given
         UserCouponEntity userCoupon1 = UserCouponEntity.create(1L, testCoupon.getId());

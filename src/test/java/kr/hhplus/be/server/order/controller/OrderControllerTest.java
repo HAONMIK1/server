@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.order;
+package kr.hhplus.be.server.order.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

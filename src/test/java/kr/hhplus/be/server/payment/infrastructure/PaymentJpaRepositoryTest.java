@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.payment.infrastructure;
 
+import kr.hhplus.be.server.balance.domain.entity.UserEntity;
 import kr.hhplus.be.server.order.domain.entity.OrderEntity;
 import kr.hhplus.be.server.order.domain.entity.OrderItemEntity;
 import kr.hhplus.be.server.payment.domain.entity.PaymentEntity;
@@ -18,7 +19,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@DisplayName("PaymentJpaRepository 테스트")
 public class PaymentJpaRepositoryTest {
     
     @Autowired
@@ -29,9 +29,15 @@ public class PaymentJpaRepositoryTest {
     
     private PaymentEntity testPayment;
     private OrderEntity testOrder;
+    private UserEntity testUser;
     
     @BeforeEach
     void setUp() {
+        // 테스트용 사용자 생성
+        testUser = new UserEntity();
+        testUser.setUserName("테스트 사용자");
+        testUser = entityManager.persistAndFlush(testUser);
+        
         // 테스트용 상품 생성
         ProductEntity testProduct = new ProductEntity();
         ReflectionTestUtils.setField(testProduct, "name", "테스트 상품");
@@ -44,7 +50,7 @@ public class PaymentJpaRepositoryTest {
         List<OrderItemEntity> orderItems = List.of(
                 OrderItemEntity.createOrderItem(testProduct, 2)
         );
-        testOrder = OrderEntity.createOrder(1L, null, orderItems);
+        testOrder = OrderEntity.createOrder(testUser.getId(), null, orderItems);
         testOrder = entityManager.persistAndFlush(testOrder);
         
         // 테스트용 결제 생성
@@ -54,7 +60,6 @@ public class PaymentJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("결제정보_저장_성공")
     void 결제정보_저장_성공() {
         // when
         PaymentEntity savedPayment = paymentJpaRepository.save(testPayment);
@@ -68,7 +73,6 @@ public class PaymentJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("결제정보_ID조회_성공")
     void 결제정보_ID조회_성공() {
         // given
         PaymentEntity savedPayment = paymentJpaRepository.save(testPayment);
@@ -83,7 +87,6 @@ public class PaymentJpaRepositoryTest {
     }
 
     @Test
-    @DisplayName("결제정보_전체조회_성공")
     void 결제정보_전체조회_성공() {
         // given
         PaymentEntity payment1 = PaymentEntity.createForOrder(testOrder);
@@ -117,7 +120,6 @@ public class PaymentJpaRepositoryTest {
     }
     
     @Test
-    @DisplayName("결제정보_쿠폰적용주문_저장_성공")
     void 결제정보_쿠폰적용주문_저장_성공() {
         // given
         ProductEntity testProduct = new ProductEntity();

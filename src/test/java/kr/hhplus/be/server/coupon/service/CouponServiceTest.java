@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.coupon;
+package kr.hhplus.be.server.coupon.service;
 
 import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
@@ -6,7 +6,6 @@ import kr.hhplus.be.server.coupon.application.service.CouponService;
 import kr.hhplus.be.server.coupon.domain.entity.CouponEntity;
 import kr.hhplus.be.server.coupon.domain.entity.UserCouponEntity;
 import kr.hhplus.be.server.coupon.presentation.dto.CouponResponse;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -82,7 +81,7 @@ class CouponServiceTest {
         // when & then
         assertThatThrownBy(() -> couponService.issueCoupon(userId, couponId))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("쿠폰을 발급할 수 없습니다. (품절 또는 기간 만료)");
+                .hasMessage("쿠폰을 발급할 수 없습니다.");
     }
 
     @Test
@@ -99,7 +98,7 @@ class CouponServiceTest {
         // when & then
         assertThatThrownBy(() -> couponService.issueCoupon(userId, couponId))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("쿠폰을 발급할 수 없습니다. (품절 또는 기간 만료)");
+                .hasMessage("쿠폰을 발급할 수 없습니다.");
     }
 
     @Test

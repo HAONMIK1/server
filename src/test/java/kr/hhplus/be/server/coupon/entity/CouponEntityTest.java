@@ -1,5 +1,5 @@
 
-package kr.hhplus.be.server.coupon;
+package kr.hhplus.be.server.coupon.entity;
 
 import kr.hhplus.be.server.coupon.domain.entity.CouponEntity;
 import org.junit.jupiter.api.Test;

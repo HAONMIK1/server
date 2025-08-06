@@ -21,6 +21,11 @@ public class OrderCoreReaderRepository implements OrderRepository {
     }
     
     @Override
+    public Optional<OrderEntity> findByIdWithOrderItems(Long id) {
+        return orderJpaRepository.findByIdWithOrderItems(id);
+    }
+    
+    @Override
     public OrderEntity save(OrderEntity order) {
         return orderJpaRepository.save(order);
     }

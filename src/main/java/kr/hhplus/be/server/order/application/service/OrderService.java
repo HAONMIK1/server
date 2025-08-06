@@ -21,7 +21,6 @@ public class OrderService {
     private final ProductService productService;
 
     public OrderResponse.Detail placeOrder(Long userId, OrderRequest.Create request) {
-        // 1. 상품 정보 조회 및 OrderItem 생성
         List<OrderItemEntity> orderItems = request.items().stream()
                 .map(item -> {
                     ProductEntity product = productService.getProduct(item.productId());
@@ -29,7 +28,6 @@ public class OrderService {
                 })
                 .collect(Collectors.toList());
 
-        // 2. 주문 생성
         OrderEntity newOrder = OrderEntity.createOrder(userId, request.userCouponId(), orderItems);
         OrderEntity savedOrder = orderRepository.save(newOrder);
 
@@ -41,10 +39,14 @@ public class OrderService {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다"));
     }
+    
+    public OrderEntity getOrderWithOrderItems(Long orderId) {
+        return orderRepository.findByIdWithOrderItems(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다"));
+    }
 
     public OrderEntity calculateAndFinalizeOrderAmounts(Long orderId) {
         OrderEntity order = getOrder(orderId);
-        // 주문 금액을 최종 확정 (쿠폰 할인 등이 이미 적용된 상태)
         return order;
     }
 
