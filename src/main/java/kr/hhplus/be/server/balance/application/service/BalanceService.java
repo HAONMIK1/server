@@ -15,7 +15,6 @@ public class BalanceService {
     private final UserBalanceRepository userBalanceRepository;
     private final BalanceHistoryRepository balanceHistoryRepository;
 
-
     public BalanceResponse charge(Long userId, int amount) {//포인트 충전
         UserBalanceEntity userBalance = getBalance(userId);
         userBalance.charge(amount);
@@ -33,14 +32,6 @@ public class BalanceService {
 
     public UserBalanceEntity getBalance(Long userId) {//포인트 조회
         return userBalanceRepository.findByUserId(userId);
-    }
-
-    public void use(Long userId, int amount) {//포인트 사용
-        UserBalanceEntity userBalance = userBalanceRepository.findByUserId(userId);
-        userBalance.use(amount);
-        userBalanceRepository.save(userBalance);
-        saveUseHistory(userId, amount);
-
     }
 
     private void saveChargeHistory(Long userId, int amount) {//포인트 충전내역 저장
