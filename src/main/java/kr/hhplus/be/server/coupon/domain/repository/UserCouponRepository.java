@@ -13,4 +13,5 @@ public interface UserCouponRepository {
     Optional<UserCouponEntity> findByUserIdAndCouponId(Long userId, Long id);
 
     List<UserCouponEntity> findByUserId(Long userId);
+    long countByCouponId(Long couponId);
 }
