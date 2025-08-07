@@ -1,7 +1,9 @@
 package kr.hhplus.be.server.product.infrastructure;
 
+import jakarta.persistence.LockModeType;
 import kr.hhplus.be.server.product.domain.entity.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,7 +18,8 @@ public interface ProductJpaRepository extends JpaRepository<ProductEntity, Long>
     @Modifying
     @Query("UPDATE ProductEntity p SET p.stockQuantity = p.stockQuantity - :quantity WHERE p.id = :productId")
     void updateStock(@Param("productId") Long productId, @Param("quantity") int quantity);
-    
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT p FROM ProductEntity p WHERE p.id = :productId")
     Optional<ProductEntity> findByIdWithLock(@Param("productId") Long productId);
 }
