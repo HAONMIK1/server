@@ -7,6 +7,8 @@ import kr.hhplus.be.server.balance.domain.repository.UserBalanceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class BalanceCoreReaderRepository implements UserBalanceRepository, BalanceHistoryRepository {
@@ -15,9 +17,8 @@ public class BalanceCoreReaderRepository implements UserBalanceRepository, Balan
     private final BalanceHistoryJpaRepository balanceHistoryJpaRepository;
     
     @Override
-    public UserBalanceEntity findByUserId(Long userId) {
-        return userBalanceJpaRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자 잔액을 찾을 수 없습니다"));
+    public Optional<UserBalanceEntity> findByUserId(Long userId) {
+        return userBalanceJpaRepository.findByUserId(userId);
     }
     
     @Override
