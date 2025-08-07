@@ -7,6 +7,7 @@ import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
 
+    @Transactional
     public CouponResponse.Issue issueCoupon(Long userId, Long couponId) {
         // 쿠폰 조회
         CouponEntity coupon = couponRepository.findById(couponId)
@@ -40,6 +42,7 @@ public class CouponService {
         return CouponResponse.Issue.from(savedUserCoupon);
     }
 
+    @Transactional
     public int calculateDiscount(Long userCouponId, int totalAmount) {
         UserCouponEntity userCoupon  = getUserCoupon(userCouponId);
         userCoupon.canUse();
@@ -47,32 +50,33 @@ public class CouponService {
         return coupon.calculateDiscount(totalAmount);
     }
 
-    public void useCoupon(Long userId) {
-        // 사용자의 미사용 쿠폰 중 첫 번째 쿠폰 사용
-        List<UserCouponEntity> userCoupons = userCouponRepository.findByUserId(userId);
-        UserCouponEntity userCoupon = userCoupons.stream()
-                .filter(coupon -> coupon.getStatus() == UserCouponEntity.UserCouponStatus.UNUSED)
-                .findFirst()
+    @Transactional
+    public void useCoupon(Long userId, Long couponId) {
+        UserCouponEntity userCoupon = userCouponRepository.findByUserIdAndCouponId(userId, couponId)
                 .orElseThrow(() -> new IllegalArgumentException("발급받지 않은 쿠폰입니다."));
-        
+
         userCoupon.use();
         userCouponRepository.save(userCoupon);
     }
 
+    @Transactional
     public List<CouponEntity> getAllCoupons() {
         return couponRepository.findAll();
     }
 
+    @Transactional
     public UserCouponEntity getUserCoupon(Long userCouponId) {
         return userCouponRepository.findById(userCouponId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자 쿠폰을 찾을 수 없습니다."));
     }
 
+    @Transactional
     public CouponEntity getCoupon(Long userCouponId) {
         return couponRepository.findById(userCouponId)
                 .orElseThrow(() -> new IllegalArgumentException("쿠폰을 찾을 수 없습니다."));
     }
 
+    @Transactional
     public List<UserCouponEntity> getUserCoupons(Long userId) {
         return userCouponRepository.findByUserId(userId);
     }
