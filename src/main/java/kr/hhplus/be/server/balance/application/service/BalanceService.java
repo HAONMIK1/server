@@ -7,6 +7,7 @@ import kr.hhplus.be.server.balance.domain.repository.BalanceHistoryRepository;
 import kr.hhplus.be.server.balance.domain.repository.UserBalanceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -15,7 +16,7 @@ public class BalanceService {
     private final UserBalanceRepository userBalanceRepository;
     private final BalanceHistoryRepository balanceHistoryRepository;
 
-
+    @Transactional
     public BalanceResponse charge(Long userId, int amount) {//포인트 충전
         UserBalanceEntity userBalance = getBalance(userId);
         userBalance.charge(amount);
@@ -23,24 +24,20 @@ public class BalanceService {
         saveChargeHistory(userId, amount);
         return BalanceResponse.from(savedBalance);
     }
-
+    
+    @Transactional
     public void use(Long userId, Integer amount) {//포인트 차감
-        UserBalanceEntity userBalance = getBalance(userId);
+        UserBalanceEntity userBalance = userBalanceRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자 잔액을 찾을 수 없습니다."));
         userBalance.use(amount);
         userBalanceRepository.save(userBalance);
         saveUseHistory(userId, amount);
     }
 
+    @Transactional
     public UserBalanceEntity getBalance(Long userId) {//포인트 조회
-        return userBalanceRepository.findByUserId(userId);
-    }
-
-    public void use(Long userId, int amount) {//포인트 사용
-        UserBalanceEntity userBalance = userBalanceRepository.findByUserId(userId);
-        userBalance.use(amount);
-        userBalanceRepository.save(userBalance);
-        saveUseHistory(userId, amount);
-
+        return userBalanceRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자 잔액을 찾을 수 없습니다."));
     }
 
     private void saveChargeHistory(Long userId, int amount) {//포인트 충전내역 저장
