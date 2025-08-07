@@ -31,5 +31,7 @@ public class UserEntity {
     @Column(name = "mdfcn_dt")
     private LocalDateTime mdfcnDt;
 
-
+    public UserEntity(String userName) {
+        this.userName = userName;
+    }
 }
