@@ -38,6 +38,14 @@ public class ProductEntity {
     @Column(name = "mdfcn_dt")
     private LocalDateTime mdfcnDt;
 
+    public ProductEntity(String name, Integer price, Integer totalQuantity, Integer stockQuantity, ProductStatus status) {
+        this.name = name;
+        this.price = price;
+        this.totalQuantity = totalQuantity;
+        this.stockQuantity = stockQuantity;
+        this.status = status;
+    }
+
     public boolean canPurchase(int quantity) {
         return stockQuantity >= quantity && status == ProductStatus.AVAILABLE;
     }

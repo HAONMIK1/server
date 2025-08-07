@@ -10,6 +10,7 @@ import kr.hhplus.be.server.product.domain.repository.ProductSalesCountRepository
 import kr.hhplus.be.server.product.domain.repository.ProductViewCountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,10 +23,12 @@ public class ProductService {
     private final ProductViewCountRepository productViewCountRepository;
     private final ProductSalesCountRepository productSalesCountRepository;
 
+    @Transactional
     public List<ProductEntity> getProducts() {
         return productRepository.findAll();
     }
 
+    @Transactional
     public ProductEntity getProduct(Long productId) {
         ProductEntity product = getProductInternal(productId);
 
@@ -34,11 +37,13 @@ public class ProductService {
         return product;
     }
 
+    @Transactional
     private ProductEntity getProductInternal(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
     }
 
+    @Transactional
     public void increaseViewCount(Long productId) {
         ProductViewCountEntity viewCount = productViewCountRepository.findByProductId(productId)
                 .orElseGet(() -> {
@@ -52,6 +57,7 @@ public class ProductService {
         productViewCountRepository.save(viewCount);
     }
 
+    @Transactional
     public void checkStock(Long productId, int quantity) {
         ProductEntity product = getProductInternal(productId);
         if (!product.canPurchase(quantity)) {
@@ -59,15 +65,18 @@ public class ProductService {
         }
     }
 
+    @Transactional
     public void decreaseStock(Long productId, int quantity) {
-        ProductEntity product = productRepository.findById(productId)
+        ProductEntity product = productRepository.findByIdWithLock(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
         product.decreaseStock(quantity);
-
+        productRepository.save(product);
+        
         // 판매량 증가
         increaseSalesCount(productId);
     }
 
+    @Transactional
     public void increaseSalesCount(Long productId) {
         ProductSalesCountEntity salesCount = productSalesCountRepository.findByProductId(productId)
                 .orElseGet(() -> {
@@ -81,11 +90,13 @@ public class ProductService {
         productSalesCountRepository.save(salesCount);
     }
 
+    @Transactional
     public List<PopularProductEntity> getPopularProducts() {
         return popularProductRepository.findPopularProductsOrderedByPriority();
     }
 
     //상위 5개만 인기상품 테이블에 저장
+    @Transactional
     public void updatePopularProducts() {
         // 1. 기존 인기상품 테이블 초기화
         popularProductRepository.deleteAllPopularProducts();

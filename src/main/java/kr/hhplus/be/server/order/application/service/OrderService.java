@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.order.application.service;
 
+import jakarta.transaction.Transactional;
 import kr.hhplus.be.server.order.domain.entity.OrderEntity;
 import kr.hhplus.be.server.order.domain.entity.OrderItemEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderRepository;
@@ -20,6 +21,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductService productService;
 
+    @Transactional
     public OrderResponse.Detail placeOrder(Long userId, OrderRequest.Create request) {
         List<OrderItemEntity> orderItems = request.items().stream()
                 .map(item -> {

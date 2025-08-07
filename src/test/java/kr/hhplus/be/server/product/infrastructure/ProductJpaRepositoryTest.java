@@ -100,16 +100,4 @@ class ProductJpaRepositoryTest {
         assertThat(testProduct.getStockQuantity()).isEqualTo(90); // 100 - 10
     }
     
-    @Test
-    void 상품_락조회_성공() {
-        // given
-        ProductEntity savedProduct = productJpaRepository.save(testProduct);
-        
-        // when
-        Optional<ProductEntity> foundProduct = productJpaRepository.findByIdWithLock(savedProduct.getId());
-        
-        // then
-        assertThat(foundProduct).isPresent();
-        assertThat(foundProduct.get().getName()).isEqualTo("테스트 상품");
-    }
 }

@@ -161,7 +161,7 @@ public class PaymentServiceTest {
         // ProductService, BalanceService, CouponService Mock 설정
         doNothing().when(productService).decreaseStock(anyLong(), anyInt());
         doNothing().when(balanceService).use(any(Long.class), any(Integer.class));
-        doNothing().when(couponService).useCoupon(anyLong());
+        doNothing().when(couponService).useCoupon(any(Long.class),any(Long.class));
 
         // when
         PaymentResponse.Complete result = paymentService.processPayment(userId, orderId, request);
@@ -177,7 +177,7 @@ public class PaymentServiceTest {
         verify(paymentRepository).save(any(PaymentEntity.class));
         verify(productService).decreaseStock(1L, 1); // 1개 상품
         verify(balanceService).use(eq(userId), any(Integer.class));
-        verify(couponService).useCoupon(userCouponId); // 쿠폰 사용
+        verify(couponService).useCoupon(userId,userCouponId); // 쿠폰 사용
     }
 
 

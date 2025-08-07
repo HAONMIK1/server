@@ -36,4 +36,7 @@ public class ProductCoreReaderRepository implements ProductRepository {
     public void updateStock(Long productId, int quantity) {
         productJpaRepository.updateStock(productId, quantity);
     }
+
+    @Override
+    public Optional<ProductEntity> findByIdWithLock(Long id) {return productJpaRepository.findByIdWithLock(id);}
 }

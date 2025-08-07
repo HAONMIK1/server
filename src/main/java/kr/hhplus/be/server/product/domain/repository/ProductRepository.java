@@ -10,4 +10,5 @@ public interface ProductRepository {
     Optional<ProductEntity> findById(Long id);
     ProductEntity save(ProductEntity product);
     void updateStock(Long productId, int quantity);
+    Optional<ProductEntity> findByIdWithLock(Long productId);
 }
