@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.payment.application.service;
 
+import jakarta.transaction.Transactional;
 import kr.hhplus.be.server.balance.application.service.BalanceService;
 import kr.hhplus.be.server.coupon.application.service.CouponService;
 import kr.hhplus.be.server.order.application.service.OrderService;
@@ -24,7 +25,8 @@ public class PaymentService {
     private final CouponService couponService;
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
-    
+
+    @Transactional
     public PaymentResponse.Complete processPayment(Long userId, Long orderId, PaymentRequest.Process request) {
         // 1. 주문 조회 및 검증 (orderItems 포함하여 N+1 문제 방지)
         OrderEntity order = orderService.getOrderWithOrderItems(orderId);
@@ -43,7 +45,7 @@ public class PaymentService {
         
         // 5. 쿠폰 사용 (쿠폰이 있는 경우)
         if (order.getUserCouponId() != null) {
-            couponService.useCoupon(order.getUserCouponId());
+            couponService.useCoupon(userId,order.getUserCouponId());
         }
         
         // 6. 결제 정보 저장

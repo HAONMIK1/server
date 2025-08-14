@@ -38,4 +38,9 @@ public class UserCouponCoreReaderRepository implements UserCouponRepository {
     public List<UserCouponEntity> findByUserId(Long userId) {
         return userCouponJpaRepository.findByUserId(userId);
     }
+    
+    @Override
+    public long countByCouponId(Long couponId) {
+        return userCouponJpaRepository.countByCouponId(couponId);
+    }
 } 
