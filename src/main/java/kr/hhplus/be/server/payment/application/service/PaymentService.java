@@ -3,6 +3,7 @@ package kr.hhplus.be.server.payment.application.service;
 import jakarta.transaction.Transactional;
 import kr.hhplus.be.server.balance.application.service.BalanceService;
 import kr.hhplus.be.server.coupon.application.service.CouponService;
+import kr.hhplus.be.server.lock.DistributedLock;
 import kr.hhplus.be.server.order.application.service.OrderService;
 import kr.hhplus.be.server.order.domain.entity.OrderEntity;
 import kr.hhplus.be.server.order.domain.entity.OrderItemEntity;
@@ -15,6 +16,8 @@ import kr.hhplus.be.server.product.application.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.TimeUnit;
+
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
@@ -25,7 +28,12 @@ public class PaymentService {
     private final CouponService couponService;
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
-
+    @DistributedLock(
+            key = "'payment:' + #userId + ':' + #orderId",
+            waitTime = 10,
+            leaseTime = 30,
+            timeUnit = TimeUnit.SECONDS
+    )
     @Transactional
     public PaymentResponse.Complete processPayment(Long userId, Long orderId, PaymentRequest.Process request) {
         // 1. 주문 조회 및 검증 (orderItems 포함하여 N+1 문제 방지)
