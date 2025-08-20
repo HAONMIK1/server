@@ -24,7 +24,9 @@ spring:
       hibernate.jdbc.batch_size: 20
       hibernate.order_inserts: true
       hibernate.order_updates: true
-
+  redis:
+    host: localhost
+    port: 6379
 ---
 spring.config.activate.on-profile: local, test
 

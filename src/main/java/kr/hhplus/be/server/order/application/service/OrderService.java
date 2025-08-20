@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.order.application.service;
 
 import jakarta.transaction.Transactional;
+import kr.hhplus.be.server.lock.DistributedLock;
 import kr.hhplus.be.server.order.domain.entity.OrderEntity;
 import kr.hhplus.be.server.order.domain.entity.OrderItemEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderRepository;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,7 +22,12 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductService productService;
-
+    @DistributedLock(
+            key = "'order:' + #userId ",
+            waitTime = 10,
+            leaseTime = 30,
+            timeUnit = TimeUnit.SECONDS
+    )
     @Transactional
     public OrderResponse.Detail placeOrder(Long userId, OrderRequest.Create request) {
         List<OrderItemEntity> orderItems = request.items().stream()
