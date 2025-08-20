@@ -22,12 +22,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductService productService;
-    @DistributedLock(
-            key = "'order:' + #userId ",
-            waitTime = 10,
-            leaseTime = 30,
-            timeUnit = TimeUnit.SECONDS
-    )
+
     @Transactional
     public OrderResponse.Detail placeOrder(Long userId, OrderRequest.Create request) {
         List<OrderItemEntity> orderItems = request.items().stream()
