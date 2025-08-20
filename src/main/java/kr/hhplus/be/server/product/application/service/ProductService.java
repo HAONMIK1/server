@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.product.application.service;
 
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import kr.hhplus.be.server.product.domain.entity.PopularProductEntity;
 import kr.hhplus.be.server.product.domain.entity.ProductEntity;
 import kr.hhplus.be.server.product.domain.entity.ProductSalesCountEntity;
@@ -90,12 +92,14 @@ public class ProductService {
         productSalesCountRepository.save(salesCount);
     }
 
+    @Cacheable(value = "popular-products")
     @Transactional
     public List<PopularProductEntity> getPopularProducts() {
         return popularProductRepository.findPopularProductsOrderedByPriority();
     }
 
-    //상위 5개만 인기상품 테이블에 저장
+
+    @CacheEvict(value = "popular-products", allEntries = true)
     @Transactional
     public void updatePopularProducts() {
         // 1. 기존 인기상품 테이블 초기화
