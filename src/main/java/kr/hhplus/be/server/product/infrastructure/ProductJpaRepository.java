@@ -2,6 +2,7 @@ package kr.hhplus.be.server.product.infrastructure;
 
 import jakarta.persistence.LockModeType;
 import kr.hhplus.be.server.product.domain.entity.ProductEntity;
+import kr.hhplus.be.server.product.domain.entity.ProductSalesCountEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
@@ -22,4 +23,12 @@ public interface ProductJpaRepository extends JpaRepository<ProductEntity, Long>
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT p FROM ProductEntity p WHERE p.id = :productId")
     Optional<ProductEntity> findByIdWithLock(@Param("productId") Long productId);
+
+    @Query(value = "SELECT p.id, COALESCE(ps.sales_count, 0) as sales_count " +
+            "FROM product p " +
+            "LEFT JOIN product_sales_count ps ON p.id = ps.product_id " +
+            "ORDER BY sales_count DESC, p.reg_dt DESC", nativeQuery = true)
+    List<ProductSalesCountEntity> findProductsBySales();
+
+
 }
