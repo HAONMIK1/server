@@ -3,6 +3,7 @@ package kr.hhplus.be.server.product.presentation.controller;
 import kr.hhplus.be.server.product.application.service.ProductService;
 import kr.hhplus.be.server.product.domain.entity.PopularProductEntity;
 import kr.hhplus.be.server.product.domain.entity.ProductEntity;
+import kr.hhplus.be.server.product.domain.entity.ProductSalesCountEntity;
 import kr.hhplus.be.server.product.presentation.dto.PopularProductResponse;
 import kr.hhplus.be.server.product.presentation.dto.ProductResponse;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,12 @@ public class ProductController {
                 .map(PopularProductResponse.Details::from)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(response);
+    }
+    //인기상품 조회
+    @GetMapping("/popular/ranking")
+    public ResponseEntity<List<ProductSalesCountEntity>> getRankingProducts() {
+        List<ProductSalesCountEntity> products = productService.getRankingProducts();
+        return ResponseEntity.ok(products);
     }
 
     //인기상품 배치

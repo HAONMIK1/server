@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.product.infrastructure;
 
 import kr.hhplus.be.server.product.domain.entity.ProductEntity;
+import kr.hhplus.be.server.product.domain.entity.ProductSalesCountEntity;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -39,4 +40,9 @@ public class ProductCoreReaderRepository implements ProductRepository {
 
     @Override
     public Optional<ProductEntity> findByIdWithLock(Long id) {return productJpaRepository.findByIdWithLock(id);}
+
+    @Override
+    public List<ProductSalesCountEntity> findProductsBySales() {
+        return productJpaRepository.findProductsBySales();
+    }
 }
