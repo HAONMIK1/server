@@ -14,6 +14,7 @@ import kr.hhplus.be.server.payment.presntation.dto.PaymentRequest;
 import kr.hhplus.be.server.payment.presntation.dto.PaymentResponse;
 import kr.hhplus.be.server.product.application.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
@@ -28,6 +29,7 @@ public class PaymentService {
     private final CouponService couponService;
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
     @DistributedLock(
             key = "'payment:' + #userId + ':' + #orderId",
             waitTime = 10,
@@ -62,7 +64,10 @@ public class PaymentService {
         // 7. 주문 완료 처리
         finalizedOrder.completeOrder();
         orderRepository.save(finalizedOrder);
-        
+
+        //8.데이터플랫폼
+        applicationEventPublisher.publishEvent(savedPayment.getId());
+
         return new PaymentResponse.Complete(PaymentResponse.PaymentDetail.from(savedPayment));
     }
 }
