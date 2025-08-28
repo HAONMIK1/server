@@ -26,9 +26,8 @@ public interface ProductJpaRepository extends JpaRepository<ProductEntity, Long>
 
     @Query(value = "SELECT p.id, COALESCE(ps.sales_count, 0) as sales_count " +
             "FROM product p " +
-            "LEFT JOIN product_sales_count ps ON p.id = ps.product_id " +
-            "ORDER BY sales_count DESC, p.reg_dt DESC", nativeQuery = true)
-    List<ProductSalesCountEntity> findProductsBySales();
+            "LEFT JOIN product_sales_count ps ON p.id = ps.product_id", nativeQuery = true)
+    List<Object[]> findProductsBySales();
 
 
 }

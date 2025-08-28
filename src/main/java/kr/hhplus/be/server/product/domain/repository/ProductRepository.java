@@ -13,5 +13,5 @@ public interface ProductRepository {
     void updateStock(Long productId, int quantity);
     Optional<ProductEntity> findByIdWithLock(Long productId);
 
-    List<ProductSalesCountEntity> findProductsBySales();
+    List<Object[]> findProductsBySales();
 }

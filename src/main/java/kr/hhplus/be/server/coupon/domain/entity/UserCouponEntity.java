@@ -34,7 +34,7 @@ public class UserCouponEntity {
 
 
     public enum UserCouponStatus {
-        UNUSED, USED, EXPIRED
+        ISSUED,UNUSED, USED, EXPIRED
     }
 
     public static UserCouponEntity create(Long userId, Long couponId) {

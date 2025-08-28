@@ -42,7 +42,7 @@ public class ProductCoreReaderRepository implements ProductRepository {
     public Optional<ProductEntity> findByIdWithLock(Long id) {return productJpaRepository.findByIdWithLock(id);}
 
     @Override
-    public List<ProductSalesCountEntity> findProductsBySales() {
+    public List<Object[]> findProductsBySales() {
         return productJpaRepository.findProductsBySales();
     }
 }

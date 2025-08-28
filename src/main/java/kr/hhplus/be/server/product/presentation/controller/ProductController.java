@@ -6,6 +6,7 @@ import kr.hhplus.be.server.product.domain.entity.ProductEntity;
 import kr.hhplus.be.server.product.domain.entity.ProductSalesCountEntity;
 import kr.hhplus.be.server.product.presentation.dto.PopularProductResponse;
 import kr.hhplus.be.server.product.presentation.dto.ProductResponse;
+import kr.hhplus.be.server.product.presentation.dto.SalesRankingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,9 +49,12 @@ public class ProductController {
     }
     //인기상품 조회
     @GetMapping("/popular/ranking")
-    public ResponseEntity<List<ProductSalesCountEntity>> getRankingProducts() {
+    public ResponseEntity<List<SalesRankingResponse.Item>> getRankingProducts() {
         List<ProductSalesCountEntity> products = productService.getRankingProducts();
-        return ResponseEntity.ok(products);
+        List<SalesRankingResponse.Item> response = products.stream()
+                .map(p -> new SalesRankingResponse.Item(p.getProductId(), p.getSalesCount()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(response);
     }
 
     //인기상품 배치

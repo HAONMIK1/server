@@ -191,12 +191,11 @@ public class ProductService {
     }
     public void loadProductsToRedis() {
         try {
-            List<ProductSalesCountEntity> allProducts = productRepository.findProductsBySales();
-
-            for (ProductSalesCountEntity product : allProducts) {
-                Long productId = product.getProductId();
-                Integer salesCount = product.getSalesCount();
-
+            List<Object[]> allProducts = productRepository.findProductsBySales();
+            
+            for (Object[] row : allProducts) {
+                Long productId = ((Number) row[0]).longValue();
+                int salesCount = ((Number) row[1]).intValue();
                 redisTemplate.opsForZSet().add(SALES_RANKING_KEY, productId.toString(), salesCount);
             }
 
