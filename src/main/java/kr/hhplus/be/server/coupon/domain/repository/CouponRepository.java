@@ -10,4 +10,6 @@ public interface CouponRepository {
     CouponEntity save(CouponEntity coupon);
     void incrementIssuedCount(Long couponId);
     List<CouponEntity> findAll();
+
+    Optional<CouponEntity> findByIdLock(Long couponId);
 }

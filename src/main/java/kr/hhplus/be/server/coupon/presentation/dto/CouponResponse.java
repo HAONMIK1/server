@@ -30,6 +30,15 @@ public class CouponResponse {
                         );
                 }
 
+            public static Issue fromQueue(Long userId, Long couponId, String issued) {
+                    return new Issue(
+                            0L,
+                            userId,
+                            couponId,
+                            issued,
+                            LocalDateTime.now()
+                    );
+            }
         }
 
         public record CouponInfo(

@@ -18,7 +18,10 @@ public class CouponCoreReaderRepository implements CouponRepository {
     public Optional<CouponEntity> findById(Long id) {
         return couponJpaRepository.findById(id);
     }
-    
+    @Override
+    public Optional<CouponEntity> findByIdLock(Long id) {
+        return couponJpaRepository.findByIdLock(id);
+    }
     @Override
     public CouponEntity save(CouponEntity coupon) {
         return couponJpaRepository.save(coupon);
