@@ -11,7 +11,6 @@ import java.util.List;
 @Repository
 public interface PopularProductJpaRepository extends JpaRepository<PopularProductEntity, Long> {
 
-    // 상품 메인 테이블과 판매량, 조회수 테이블 JOIN하여 상위 5개 인기상품 조회
     @Query(value = "SELECT p.id, " +
             "COALESCE(ps.sales_count, 0) as sales_count, " +
             "COALESCE(pv.view_count, 0) as view_count, " +
@@ -23,11 +22,9 @@ public interface PopularProductJpaRepository extends JpaRepository<PopularProduc
             "LIMIT 5", nativeQuery = true)
     List<Object[]> findPopularProducts();
 
-    // 인기상품 테이블에서 모든 데이터 조회
     @Query("SELECT pp FROM PopularProductEntity pp ORDER BY pp.viewCount DESC, pp.salesCount DESC")
     List<PopularProductEntity> findPopularProductsOrderedByPriority();
 
-    // 인기상품 테이블 초기화
     @Modifying
     @Query("DELETE FROM PopularProductEntity pp")
     void deleteAllPopularProducts();

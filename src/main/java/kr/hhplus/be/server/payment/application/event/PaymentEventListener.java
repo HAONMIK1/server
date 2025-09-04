@@ -16,7 +16,7 @@ public class PaymentEventListener {
     private final PaymentMockDataPlatformClient client;
     private final PaymentRepository paymentRepository;
 
-    @Async
+    @Async("taskExecutor")
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handle(Long paymentId) {
         try {

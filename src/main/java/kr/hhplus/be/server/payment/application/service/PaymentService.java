@@ -14,15 +14,15 @@ import kr.hhplus.be.server.payment.presntation.dto.PaymentRequest;
 import kr.hhplus.be.server.payment.presntation.dto.PaymentResponse;
 import kr.hhplus.be.server.product.application.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
-    
+
     private final OrderService orderService;
     private final ProductService productService;
     private final BalanceService balanceService;
@@ -38,34 +38,33 @@ public class PaymentService {
     )
     @Transactional
     public PaymentResponse.Complete processPayment(Long userId, Long orderId, PaymentRequest.Process request) {
-        // 1. 주문 조회 및 검증 (orderItems 포함하여 N+1 문제 방지)
+        // 1. 주문 조회 및 검증
         OrderEntity order = orderService.getOrderWithOrderItems(orderId);
         order.validateForPayment(userId);
-        
+
         // 2. 주문 금액 계산 및 확정
         OrderEntity finalizedOrder = orderService.calculateAndFinalizeOrderAmounts(orderId);
-        
+
         // 3. 재고 차감
         for (OrderItemEntity orderItem : order.getOrderItems()) {
             productService.decreaseStock(orderItem.getProductId(), orderItem.getQuantity());
         }
-        
+
         // 4. 잔액 차감
         balanceService.use(userId, finalizedOrder.getFinalAmount());
-        
+
         // 5. 쿠폰 사용 (쿠폰이 있는 경우)
         if (order.getUserCouponId() != null) {
             couponService.useCoupon(userId,order.getUserCouponId());
         }
-        
+
         // 6. 결제 정보 저장
         PaymentEntity savedPayment = paymentRepository.save(PaymentEntity.from(finalizedOrder, request.paymentMethod()));
-        
+
         // 7. 주문 완료 처리
         finalizedOrder.completeOrder();
         orderRepository.save(finalizedOrder);
-
-        //8.데이터플랫폼
+        // 8. 이벤트 발행
         applicationEventPublisher.publishEvent(savedPayment.getId());
 
         return new PaymentResponse.Complete(PaymentResponse.PaymentDetail.from(savedPayment));
