@@ -30,11 +30,14 @@ dependencyManagement {
 }
 
 dependencies {
-    // Spring
+	// Spring
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-cache")
+
+	// Kafka
+	implementation("org.springframework.kafka:spring-kafka")
 
 	// Lombok
 	compileOnly("org.projectlombok:lombok")
@@ -45,17 +48,18 @@ dependencies {
 	// Swagger
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
 
-    // DB
+	// DB
 	runtimeOnly("com.mysql:mysql-connector-j")
 
 	//Redisson
 	implementation("org.redisson:redisson-spring-boot-starter:3.29.0")
 
-    // Test
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+	// Test
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:mysql")
+	testImplementation("org.testcontainers:kafka")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	testRuntimeOnly("com.h2database:h2")
 }
